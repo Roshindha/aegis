@@ -73,3 +73,11 @@ def test_oscal_link_uuid_stripped_label_kept():
 def test_no_chunk_contains_raw_oscal_link():
     for line in CHUNKS_PATH.open(encoding="utf-8"):
         assert "](#" not in json.loads(line)["text"]
+
+
+@needs_chunks
+def test_committed_corpus_matches_freshly_built_chunks():
+    corpus = Path("corpus/chunks.jsonl")
+    if not corpus.exists():
+        pytest.skip("no corpus snapshot")
+    assert corpus.read_text(encoding="utf-8") == CHUNKS_PATH.read_text(encoding="utf-8")
