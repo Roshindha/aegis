@@ -1,3 +1,8 @@
+"""Turn the IM8 Reform OSCAL catalogue into control-aware chunks.
+
+One control = one chunk. Controls are short (35-160 words), so we never split
+them; instead we attach rich metadata so retrieval can filter and cite.
+"""
 from __future__ import annotations
 
 import json
@@ -5,21 +10,25 @@ import re
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
-
-REPO =Path("data/raw/tech-standards")
+REPO = Path("data/raw/tech-standards")
 CATALOG = REPO / "catalogs" / "im8-reform.json"
 PROFILES = REPO / "profiles"
 SOURCE_URL = "https://github.com/GovTechSG/tech-standards"
 
 LEVEL_NAMES = {0: "must-have", 1: "should-have", 2: "good-to-have"}
 
+# OSCAL placeholders look like: {{ insert: param, tp-4_prm_2 }}
 PARAM_RE = re.compile(r"\{\{\s*insert:\s*param,\s*([\w-]+)\s*\}\}")
+# OSCAL cross-links look like: [SP 800-63b](#e59c5a7c-8b1f-...) -- keep the label, drop the UUID
+LINK_RE = re.compile(r"\[([^\]]+)\]\(#[^)]*\)")
+
 
 @dataclass
 class Reference:
-    framework: str
-    ref_id:str
-    raw:str
+    framework: str   # e.g. "NIST SP 800-53", "MVSP", "IM8 (legacy)"
+    ref_id: str      # e.g. "AC-2(3)", "2.7", "1.7/S1c"
+    raw: str         # original text, kept for display
+
 
 @dataclass
 class Chunk:
@@ -37,28 +46,46 @@ class Chunk:
     last_modified: str = ""
     catalog_version: str = ""
     source_url: str = SOURCE_URL
-    text: str = ""  
+    text: str = ""   # what gets embedded and keyword-indexed
 
 
-def _part(control: dict, name:str) -> str:
+# ---------- small helpers ----------
+
+def _render(part: dict) -> str:
+    """A part's own prose plus any nested list items, e.g. NS-6's four certificate rules."""
+    lines = [LINK_RE.sub(r"\1", part.get("prose", ""))]
+    for item in part.get("parts", []):
+        label = next((p["value"] for p in item.get("props", []) if p["name"] == "label"), "-")
+        lines.append(f"  ({label}) {_render(item)}")
+    return "\n".join(lines)
+
+
+def _part(control: dict, name: str) -> str:
     for part in control.get("parts", []):
-        if part["name"]== name:
-            return part.get("prose", "")
+        if part["name"] == name:
+            return _render(part)
     return ""
 
 
-def _prop(control: dict, name:str) -> str:
-    for prop in control.get("props",[]):
-        if prop["name"]==name:
+def _prop(control: dict, name: str) -> str:
+    for prop in control.get("props", []):
+        if prop["name"] == name:
             return prop["value"]
     return ""
 
+
 def resolve_params(text: str, control: dict) -> str:
-    labels = {p["id"]:p.get("label", "value")for p in control.get("params",[])}
+    """Replace OSCAL placeholders with a readable label.
+
+    No profile in this release sets parameter values, so the honest rendering is
+    "[agency-defined: <label>]" rather than inventing a number.
+    """
+    labels = {p["id"]: p.get("label", "value") for p in control.get("params", [])}
     return PARAM_RE.sub(lambda m: f"[agency-defined: {labels.get(m.group(1), 'value')}]", text)
 
+
 def parse_reference(raw: str) -> Reference:
-    """Parse a reference string into a Reference object."""
+    """Normalise messy reference strings into (framework, ref_id)."""
     head = raw.split(":")[0].strip()
     tail = raw.split(":", 1)[1].strip() if ":" in raw else ""
 
@@ -148,5 +175,3 @@ def save_jsonl(chunks: list[Chunk], path: Path) -> None:
     with path.open("w", encoding="utf-8") as f:
         for c in chunks:
             f.write(json.dumps(asdict(c), ensure_ascii=False) + "\n")
-
-
