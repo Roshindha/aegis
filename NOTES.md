@@ -10,3 +10,8 @@ Format: decision. Reason.
 - Template generator is seeded (`random.Random(7)`) with sorted candidates, so qids are stable for a given corpus.
 - Validator skips unknown-ID checks on question text when the question names NIST/MVSP/CIS/SLSA/CCM (NIST IDs like AC-2 collide with IM8 ID format) or is flagged `unknown_id_probe`.
 - Curated questions (61) are AI-drafted from the control text, `source: curated`, `verified: false`. User verifies later.
+- Retrieval has two backends with the same model and data: `local` (default; reads `corpus/chunks.jsonl`, vectors in memory) and `db` (`AEGIS_BACKEND=db`, Supabase). Needed so tests, CI, Docker and HF Spaces run without a database. Default flipped from db to local.
+- `rrf_fuse` now copies hits instead of mutating the caller's lists (needed for the per-stage Pipeline Explorer; test added).
+- Guardrail = regex pre-filter (injection, other frameworks/laws, unknown control IDs) + rerank-score threshold. Refusal is decided in code before the LLM is called; the LLM is never asked to refuse.
+- Lookup-style questions (names a real control ID, a group title, or a crosswalk reference) bypass the threshold: the cross-encoder scores relevance of prose, and these questions get low scores although they are answerable (seen: group_list and crosswalk questions at -6 to -8).
+- Threshold calibrated by 5-fold stratified CV (seed 13) on non-bypassed questions; reported F1 is held-out. Result is weak on its own (CV F1 ~0.49): the MS-MARCO cross-encoder cannot separate off-topic from terse in-scope queries well. Prefilter patterns were written after seeing the benchmark negatives, so prefilter numbers are in-sample and optimistic; ablations report each layer separately.

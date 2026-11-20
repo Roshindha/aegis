@@ -19,9 +19,9 @@ def get_model() -> SentenceTransformer:
     return SentenceTransformer(MODEL_NAME)
 
 
-def embed_documents(texts: list[str]) -> np.ndarray:
+def embed_documents(texts: list[str], show_progress: bool = True) -> np.ndarray:
     return get_model().encode(
-        texts, batch_size=32, normalize_embeddings=True, show_progress_bar=True
+        texts, batch_size=32, normalize_embeddings=True, show_progress_bar=show_progress
     )
 
 

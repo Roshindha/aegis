@@ -2,14 +2,28 @@
 reciprocal rank fusion (RRF)."""
 from __future__ import annotations
 
+import os
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import lru_cache
 
+import numpy as np
 from rank_bm25 import BM25Okapi
 
-from aegis.db import connect
-from aegis.embed import embed_query
+from aegis.corpus import load_chunks
+from aegis.embed import embed_documents, embed_query
+
+# Two interchangeable backends hold the same data and use the same embedding model:
+#   "local" (default): read corpus/chunks.jsonl, keep vectors in memory. No database needed,
+#                      so tests, CI, Docker and Hugging Face Spaces all work offline.
+#   "db":              Supabase Postgres + pgvector (set AEGIS_BACKEND=db and DATABASE_URL).
+def backend() -> str:
+    return os.environ.get("AEGIS_BACKEND", "local").lower()
+
+
+def _connect():
+    from aegis.db import connect   # imported lazily: the local backend never needs psycopg
+    return connect()
 
 # ---------- data type ----------
 
@@ -37,11 +51,28 @@ SEMANTIC_SQL = """
 """
 
 
+def _local_rows() -> list[tuple]:
+    """Same columns and order as the database query: (chunk_id, control_id, title, group_title, content)."""
+    chunks = sorted(load_chunks(), key=lambda c: c["chunk_id"])
+    return [(c["chunk_id"], c["control_id"], c["title"], c["group_title"], c["text"]) for c in chunks]
+
+
+@lru_cache(maxsize=1)
+def _local_index() -> tuple[list[tuple], np.ndarray]:
+    rows = _local_rows()
+    return rows, embed_documents([r[4] for r in rows], show_progress=False)   # unit-length vectors
+
+
 def semantic_search(query: str, k: int = 5) -> list[Hit]:
     q = embed_query(query)
-    with connect() as conn:
-        rows = conn.execute(SEMANTIC_SQL, {"q": q, "k": k}).fetchall()
-    return [Hit(*row, semantic_rank=i) for i, row in enumerate(rows, start=1)]
+    if backend() == "db":
+        with _connect() as conn:
+            rows = conn.execute(SEMANTIC_SQL, {"q": q, "k": k}).fetchall()
+        return [Hit(*row, semantic_rank=i) for i, row in enumerate(rows, start=1)]
+    rows, matrix = _local_index()
+    sims = matrix @ q                       # cosine similarity: both sides are unit length
+    top = np.argsort(-sims)[:k]
+    return [Hit(*rows[i], score=float(sims[i]), semantic_rank=r) for r, i in enumerate(top, start=1)]
 
 
 # ---------- BM25 keyword search (Step 4) ----------
@@ -63,10 +94,13 @@ def tokenize(text: str) -> list[str]:
 @lru_cache(maxsize=1)
 def _load_corpus() -> tuple[list[tuple], BM25Okapi]:
     """Read all chunks once and build the BM25 index in memory (137 rows: instant)."""
-    with connect() as conn:
-        rows = conn.execute(
-            "select chunk_id, control_id, title, group_title, content from chunks order by chunk_id"
-        ).fetchall()
+    if backend() == "db":
+        with _connect() as conn:
+            rows = conn.execute(
+                "select chunk_id, control_id, title, group_title, content from chunks order by chunk_id"
+            ).fetchall()
+    else:
+        rows = _local_rows()
     return rows, BM25Okapi([tokenize(r[4]) for r in rows])
 
 
@@ -95,7 +129,7 @@ def rrf_fuse(lists: list[list[Hit]], k: int = 5) -> list[Hit]:
         for rank, hit in enumerate(hits, start=1):
             fused[hit.chunk_id] = fused.get(hit.chunk_id, 0.0) + 1.0 / (RRF_K + rank)
             if hit.chunk_id not in best:
-                best[hit.chunk_id] = hit
+                best[hit.chunk_id] = replace(hit)       # copy: never mutate the caller's hits
             else:                                   # merge rank info from both methods
                 best[hit.chunk_id].semantic_rank = best[hit.chunk_id].semantic_rank or hit.semantic_rank
                 best[hit.chunk_id].bm25_rank = best[hit.chunk_id].bm25_rank or hit.bm25_rank
