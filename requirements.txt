@@ -1,2 +1,6 @@
 python-dotenv
 pytest
+sentence-transformers
+psycopg[binary]
+pgvector
+rank-bm25
