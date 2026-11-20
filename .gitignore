@@ -4,4 +4,4 @@ __pycache__/
 data/raw/
 data/interim/
 *.pyc
-data/processed/
+data/processed/eval/cache/

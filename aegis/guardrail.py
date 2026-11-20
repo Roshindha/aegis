@@ -16,7 +16,10 @@ from aegis.corpus import REPO_ROOT, load_chunks
 
 REFUSAL_TEXT = "The provided IM8 controls do not answer this question."
 THRESHOLD_FILE = REPO_ROOT / "eval" / "threshold.json"
-DEFAULT_THRESHOLD = 0.0       # cross-encoder logits: > 0 means "relevant"; used only if no calibration file
+# Candidate relevance signals for the refusal threshold. eval/calibrate.py picks the one with the
+# best held-out F1. Defaults apply only if no calibration file exists.
+FEATURES = ("rerank_top1", "bm25_top1")
+DEFAULT_FEATURE, DEFAULT_THRESHOLD = "rerank_top1", 0.0   # cross-encoder logit > 0 means "relevant"
 
 # --- layer 1: obvious prompt injection / abuse (generic phrases, not tied to any one question)
 INJECTION_PATTERNS = [
@@ -105,19 +108,35 @@ def prefilter(question: str) -> PrefilterResult:
 
 
 @lru_cache(maxsize=1)
-def load_threshold(path: Path = THRESHOLD_FILE) -> float:
+def load_calibration(path: Path = THRESHOLD_FILE) -> tuple[str, float]:
+    """(feature, threshold) from the committed calibration file."""
     if path.exists():
-        return float(json.loads(path.read_text())["threshold"])
-    return DEFAULT_THRESHOLD
+        d = json.loads(path.read_text())
+        return d.get("feature", DEFAULT_FEATURE), float(d["threshold"])
+    return DEFAULT_FEATURE, DEFAULT_THRESHOLD
+
+
+def load_threshold() -> float:
+    return load_calibration()[1]
+
+
+def feature_value(feature: str, ranked: list, bm25_hits: list) -> float | None:
+    """The calibrated relevance signal: top rerank logit, or top BM25 score (0 if no term matched)."""
+    if feature == "rerank_top1":
+        return ranked[0].score if ranked else None
+    if feature == "bm25_top1":
+        return bm25_hits[0].score if bm25_hits else 0.0
+    raise ValueError(f"unknown feature {feature!r}")
 
 
 @dataclass
 class Decision:
     refuse: bool
     reason: str | None            # why: prefilter reason, "low_retrieval_score", or None
-    top_score: float | None
+    top_score: float | None       # value of the calibrated feature (name in `feature`)
     threshold: float
     bypassed_threshold: bool = False
+    feature: str = ""
 
 
 def decide(question: str, top_score: float | None, *, threshold: float | None = None,
@@ -128,15 +147,16 @@ def decide(question: str, top_score: float | None, *, threshold: float | None = 
     bypass_threshold: the question names a real control ID (or a recognised external
     reference), so retrieval is by identifier and the semantic-relevance score says nothing.
     """
-    t = load_threshold() if threshold is None else threshold
+    feature, cal_t = load_calibration()
+    t = cal_t if threshold is None else threshold
     if use_prefilter:
         pre = prefilter(question)
         if pre.blocked:
-            return Decision(True, pre.reason, top_score, t)
+            return Decision(True, pre.reason, top_score, t, feature=feature)
     if not use_threshold:
-        return Decision(False, None, top_score, t)
+        return Decision(False, None, top_score, t, feature=feature)
     if bypass_threshold:
-        return Decision(False, None, top_score, t, bypassed_threshold=True)
+        return Decision(False, None, top_score, t, bypassed_threshold=True, feature=feature)
     if top_score is None or top_score < t:
-        return Decision(True, "low_retrieval_score", top_score, t)
-    return Decision(False, None, top_score, t)
+        return Decision(True, "low_retrieval_score", top_score, t, feature=feature)
+    return Decision(False, None, top_score, t, feature=feature)

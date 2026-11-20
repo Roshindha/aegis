@@ -14,6 +14,7 @@ def _hit(cid, score=1.0):
 def stubs(monkeypatch):
     monkeypatch.setattr(gr, "known_ids", lambda: frozenset({"AS-5", "BR-2"}))
     monkeypatch.setattr(gr, "_group_titles", lambda: ())
+    monkeypatch.setattr(gr, "load_calibration", lambda: ("rerank_top1", 0.0))
     calls = {"llm": 0, "retrieval": 0}
 
     def sem(q, k):

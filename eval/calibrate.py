@@ -1,6 +1,6 @@
 """Calibrate the refusal threshold on the benchmark.
 
-The guardrail refuses when the top cross-encoder score < t. We choose t to maximise
+The guardrail refuses when a relevance signal (top cross-encoder logit, or top BM25 score) < t. We choose t to maximise
 abstention F1 (positive class = "should refuse" = unanswerable question), but we do NOT
 report the F1 measured on the questions used to choose t. Instead:
 
@@ -21,7 +21,9 @@ from datetime import date
 from pathlib import Path
 
 from aegis import guardrail
-from aegis.pipeline import retrieve
+from aegis.pipeline import CANDIDATES
+from aegis.rerank import rerank
+from aegis.retrieve import bm25_search, rrf_fuse, semantic_search
 from eval.validate import load_questions
 
 OUT = Path("eval/threshold.json")
@@ -45,6 +47,8 @@ def best_threshold(scores: list[float], labels: list[bool]) -> float:
     """The t maximising F1. Candidates are midpoints between neighbouring distinct scores;
     among ties we take the middle candidate (the most margin on both sides)."""
     uniq = sorted(set(scores))
+    if not uniq:
+        return 0.0                      # nothing to fit on (tiny training fold)
     cands = [uniq[0] - 1.0] + [(a + b) / 2 for a, b in zip(uniq, uniq[1:])] + [uniq[-1] + 1.0]
     f = [f1_scores(scores, labels, t)["f1"] for t in cands]
     best = max(f)
@@ -61,6 +65,18 @@ def stratified_folds(labels: list[bool], k: int, seed: int) -> list[list[int]]:
         for j, i in enumerate(idx):
             folds[j % k].append(i)
     return folds
+
+
+def heldout_thresholds(scores: list[float], labels: list[bool], k: int = FOLDS, seed: int = SEED) -> list[float]:
+    """For each question, the threshold chosen WITHOUT it (on the other folds)."""
+    out = [0.0] * len(scores)
+    for test in stratified_folds(labels, k, seed):
+        held = set(test)
+        tr = [i for i in range(len(scores)) if i not in held]
+        t = best_threshold([scores[i] for i in tr], [labels[i] for i in tr])
+        for i in test:
+            out[i] = t
+    return out
 
 
 def cross_validate(scores: list[float], labels: list[bool], k: int = FOLDS, seed: int = SEED) -> dict:
@@ -84,31 +100,42 @@ def cross_validate(scores: list[float], labels: list[bool], k: int = FOLDS, seed
             "fold_thresholds": per_fold_t}
 
 
-def top_scores(questions: list[dict]) -> list[float]:
-    out = []
+def feature_scores(questions: list[dict]) -> dict[str, list[float]]:
+    """Relevance signals per question, computed exactly as the pipeline computes them."""
+    out: dict[str, list[float]] = {f: [] for f in guardrail.FEATURES}
     for q in questions:
-        hits = retrieve("hybrid_rerank", q["question"], k=5)
-        out.append(hits[0].score if hits else float("-inf"))
+        text = q["question"]
+        bm = bm25_search(text, CANDIDATES)
+        fused = rrf_fuse([semantic_search(text, CANDIDATES), bm], k=CANDIDATES)
+        ranked = rerank(text, fused, k=5)
+        for f in guardrail.FEATURES:
+            v = guardrail.feature_value(f, ranked, bm)
+            out[f].append(float("-inf") if v is None else v)
     return out
 
 
 def main() -> None:
-    qs = [q for q in load_questions(Path("eval/questions.jsonl"))
-          if guardrail.structural_bypass(q["question"]) is None]    # threshold never decides these
-    scores = top_scores(qs)
+    all_qs = load_questions(Path("eval/questions.jsonl"))
+    qs = [q for q in all_qs if guardrail.structural_bypass(q["question"]) is None]   # threshold never decides the rest
     labels = [not q["answerable"] for q in qs]
-    t = best_threshold(scores, labels)
-    cv = cross_validate(scores, labels)
-    in_sample = f1_scores(scores, labels, t)
+    feats = feature_scores(qs)
+    report = {}
+    for f, scores in feats.items():
+        cv = cross_validate(scores, labels)
+        report[f] = {"threshold": round(best_threshold(scores, labels), 4),
+                     "cv_heldout": {k: round(v, 4) if isinstance(v, float) else v for k, v in cv.items()},
+                     "in_sample": {k: round(v, 4) for k, v in f1_scores(scores, labels, best_threshold(scores, labels)).items()}}
+    chosen = max(report, key=lambda f: (report[f]["cv_heldout"]["f1"], f == "rerank_top1"))
     out = {
-        "threshold": round(t, 4),
-        "method": f"maximise abstention F1 over midpoints of observed top-1 rerank scores; "
-                  f"reported F1 is from stratified {FOLDS}-fold CV (seed {SEED}); shipped t fitted on all",
+        "feature": chosen,
+        "threshold": report[chosen]["threshold"],
+        "method": f"for each candidate feature: maximise abstention F1 over midpoints of observed scores; "
+                  f"choose the feature with the best stratified {FOLDS}-fold CV held-out F1 (seed {SEED}); "
+                  f"shipped threshold fitted on all non-bypassed questions",
         "n_questions": len(qs), "n_should_refuse": sum(labels),
-        "n_excluded_bypass": len(load_questions(Path("eval/questions.jsonl"))) - len(qs),
+        "n_excluded_bypass": len(all_qs) - len(qs),
         "n_unverified": sum(not q["verified"] for q in qs),
-        "cv_heldout": {k: round(v, 4) if isinstance(v, float) else v for k, v in cv.items()},
-        "in_sample": {k: round(v, 4) for k, v in in_sample.items()},
+        "candidates": report,
         "date": date.today().isoformat(),
     }
     OUT.write_text(json.dumps(out, indent=2) + "\n")

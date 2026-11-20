@@ -68,7 +68,7 @@ def run_stages(question: str, *, k: int = 5, use_guardrail: bool = True, generat
         # Refuse without retrieval or any LLM call.
         decision = guardrail.decide(question, None)
         yield {"stage": "guardrail", "data": {"refuse": True, "reason": decision.reason,
-                                              "top_score": None, "threshold": decision.threshold}}
+                                              "feature": decision.feature, "score": None, "threshold": decision.threshold}}
         res = Result(question, True, guardrail.REFUSAL_TEXT, decision.reason)
         yield {"stage": "result", "data": res.to_dict(), "obj": res}
         return
@@ -81,14 +81,16 @@ def run_stages(question: str, *, k: int = 5, use_guardrail: bool = True, generat
     yield {"stage": "fusion", "data": {"hits": [hit_dict(h) for h in fused[:k]]}}
     ranked = rerank(question, fused, k=k)
     top = ranked[0].score if ranked else None
+    feature, _ = guardrail.load_calibration()
+    signal = guardrail.feature_value(feature, ranked, bm)
     yield {"stage": "rerank", "data": {"hits": [hit_dict(h) for h in ranked]}}
 
     bypass = guardrail.structural_bypass(question)
-    decision = guardrail.decide(question, top, use_prefilter=use_guardrail, use_threshold=use_guardrail,
+    decision = guardrail.decide(question, signal, use_prefilter=use_guardrail, use_threshold=use_guardrail,
                                 bypass_threshold=bypass is not None)
     yield {"stage": "guardrail", "data": {"refuse": decision.refuse, "reason": decision.reason,
-                                          "top_score": top, "threshold": decision.threshold,
-                                          "bypassed_threshold": decision.bypassed_threshold,
+                                          "feature": feature, "score": signal, "top_rerank_score": top,
+                                          "threshold": decision.threshold, "bypassed_threshold": decision.bypassed_threshold,
                                           "bypass_reason": bypass}}
     if decision.refuse:
         res = Result(question, True, guardrail.REFUSAL_TEXT, decision.reason, ranked, top_score=top)
