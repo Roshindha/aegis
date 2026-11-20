@@ -17,7 +17,7 @@ Aegis answers questions about the Singapore Government's **IM8 Reform** security
 It is a retrieval-augmented generation (RAG) system built to be inspected: every stage between question and
 answer is visible in the Pipeline Explorer, and every number in this README is produced by a committed script.
 
-> **Honesty notes up front.** The benchmark's 61 curated questions were drafted with AI assistance from the
+> **Honesty notes up front.** The benchmark's 61 curated questions were drafted with LLM assistance from the
 > control text, and **none of the questions has been human-verified yet** (the `verified` flag is `false`
 > throughout). Treat all results as provisional until they are verified. Details under [Limitations](#limitations).
 
@@ -89,7 +89,7 @@ python -m eval.update_readme eval/results/<run>.json eval/results/<baseline>.jso
 <!-- RESULTS:START -->
 Run `final.json` · date 2026-11-20 · commit `02729f5+dirty` · retrieval backend `local` · LLM `openai/gpt-oss-20b`
 
-**124 benchmark questions, 124 of them human-unverified.** All curated questions were drafted with AI assistance and have not yet been human-verified; every metric below carries that caveat.
+**124 benchmark questions, 124 of them human-unverified.** All curated questions were drafted with LLM assistance; gold labels are pending manual verification; every metric below carries that caveat.
 
 ### Retrieval ablation
 
@@ -196,7 +196,7 @@ All figures are from `eval/results/final.json` and `eval/results/baseline-pre-cr
 
 ## Limitations
 
-- **Benchmark provenance.** 63 generated questions have gold labels copied from catalogue data and independently re-checked by `eval/validate.py`. The 61 curated questions (paraphrases, agency-defined values, out-of-scope, multi-control) were drafted by an AI assistant from the control text. **No question has been human-verified yet**; the validator checks structure and derivable labels, not whether a paraphrase's single gold control is the only reasonable answer.
+- **Benchmark provenance.** 63 generated questions have gold labels copied from catalogue data and independently re-checked by `eval/validate.py`. The 61 curated questions (paraphrases, agency-defined values, out-of-scope, multi-control) were drafted with LLM assistance from the control text. **No question has been human-verified yet**; the validator checks structure and derivable labels, not whether a paraphrase's single gold control is the only reasonable answer.
 - **Small benchmark.** 124 questions, 26 of them unanswerable; differences of a few points are within noise.
 - **Pre-filter is in-sample.** Its patterns were written after seeing the benchmark's out-of-scope questions, so its recall on unseen questions is likely lower than reported. The threshold is cross-validated, the pre-filter is not.
 - **Crosswalk gold is circular.** Crosswalk questions are scored against the same `references` data the index is built from: the after-fix numbers measure detection and routing, not independent truth.

@@ -166,7 +166,7 @@ def render_markdown(res: dict) -> str:
     L = [f"# Evaluation results ({res['date']})", "",
          f"- commit `{res['commit']}`, backend `{res['backend']}`, LLM `{res.get('model', 'n/a')}`",
          f"- {res['n_questions']} questions, **{res['n_unverified']} unverified** "
-         f"(curated questions are AI-drafted; `verified` is set by a human)", ""]
+         f"(curated questions were drafted with LLM assistance; `verified` is set by a human)", ""]
     L += ["## Retrieval (answerable questions with gold controls)", "",
           "| method | n | unverified | MRR | set-recall@5 | set-recall@20 | hit@5 | hit@20 |", "|---|---|---|---|---|---|---|---|"]
     for m, d in res["retrieval"].items():

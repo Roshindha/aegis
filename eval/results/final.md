@@ -1,7 +1,7 @@
 # Evaluation results (2026-11-20)
 
 - commit `02729f5+dirty`, backend `local`, LLM `openai/gpt-oss-20b`
-- 124 questions, **124 unverified** (curated questions are AI-drafted; `verified` is set by a human)
+- 124 questions, **124 unverified** (curated questions are LLM-assisted; `verified` is set by a human)
 
 ## Retrieval (answerable questions with gold controls)
 

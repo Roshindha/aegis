@@ -9,7 +9,7 @@ Format: decision. Reason.
 - Crosswalk gold comes from the same `references` data a crosswalk index would use, so post-fix scores measure query routing, not independent truth. Stated as a limitation.
 - Template generator is seeded (`random.Random(7)`) with sorted candidates, so qids are stable for a given corpus.
 - Validator skips unknown-ID checks on question text when the question names NIST/MVSP/CIS/SLSA/CCM (NIST IDs like AC-2 collide with IM8 ID format) or is flagged `unknown_id_probe`.
-- Curated questions (61) are AI-drafted from the control text, `source: curated`, `verified: false`. User verifies later.
+- Curated questions: 61 questions were drafted with LLM assistance; gold labels pending manual verification. (`source: curated`, `verified: false`).
 - Retrieval has two backends with the same model and data: `local` (default; reads `corpus/chunks.jsonl`, vectors in memory) and `db` (`AEGIS_BACKEND=db`, Supabase). Needed so tests, CI, Docker and HF Spaces run without a database. Default flipped from db to local.
 - `rrf_fuse` now copies hits instead of mutating the caller's lists (needed for the per-stage Pipeline Explorer; test added).
 - Guardrail = regex pre-filter (injection, other frameworks/laws, unknown control IDs) + rerank-score threshold. Refusal is decided in code before the LLM is called; the LLM is never asked to refuse.

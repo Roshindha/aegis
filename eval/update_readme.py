@@ -22,7 +22,7 @@ def compose(final: dict, baseline: dict | None, final_name: str, baseline_name: 
          + (f" · LLM `{final['model']}`" if final.get("model") else ""),
          "",
          f"**{final['n_questions']} benchmark questions, {final['n_unverified']} of them human-unverified.** "
-         "All curated questions were drafted with AI assistance and have not yet been human-verified; "
+         "All curated questions were drafted with LLM assistance; gold labels are pending manual verification; "
          "every metric below carries that caveat.", "",
          "### Retrieval ablation", "",
          "Answerable questions that have gold controls. Set-recall = fraction of gold controls found; hit = at least one found.", "",
