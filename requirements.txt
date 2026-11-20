@@ -1,2 +1,2 @@
-pymupdf
 python-dotenv
+pytest
