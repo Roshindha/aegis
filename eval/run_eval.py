@@ -272,11 +272,18 @@ def main() -> int:
         answerer = make_cached_answerer(answer_question, cache, model)
         res["generation"] = eval_generation(questions, final_hits, answerer, decisions["both_shipped_threshold"], args.limit)
         if args.ragas:
-            from eval.ragas_eval import run_ragas
-            res["ragas"] = run_ragas(questions, final_hits, res["generation"]["answers"], args.ragas)
+            from eval.ragas_eval import sample_inputs
+            ctx = {qid: [h.content for h in hs[:crosswalk.context_size(hs, 5)]] for qid, hs in final_hits.items()}
+            inputs = sample_inputs(questions, ctx, res["generation"]["answers"], args.ragas)
+            res["ragas_inputs_n"] = len(inputs)
+            ragas_inputs = inputs
 
     RESULTS.mkdir(parents=True, exist_ok=True)
     stem = Path(args.out) if args.out else RESULTS / (res["date"] + ("-retrieval" if args.retrieval_only else ""))
+    if args.ragas and not args.retrieval_only:
+        stem.with_name(stem.name + "-ragas-inputs.json").write_text(
+            json.dumps(ragas_inputs, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        print(f"RAGAS inputs written; score them with: python -m eval.ragas_eval {stem.with_suffix('.json')}")
     stem.with_suffix(".json").write_text(json.dumps(res, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     stem.with_suffix(".md").write_text(render_markdown(res), encoding="utf-8")
     print(render_markdown(res))
