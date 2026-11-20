@@ -38,6 +38,7 @@ class Hit:
     score: float                      # the score of the method that produced this hit
     semantic_rank: int | None = None  # 1-based rank in the semantic list (None = absent)
     bm25_rank: int | None = None      # 1-based rank in the BM25 list (None = absent)
+    via: str = ""                     # "crosswalk" if injected by an index lookup, else ""
 
 
 # ---------- semantic search (Step 3) ----------

@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 from typing import Callable, Iterator
 
-from aegis import guardrail
+from aegis import crosswalk, guardrail
 from aegis.generate import Answer, answer_question
 from aegis.rerank import rerank
 from aegis.retrieve import Hit, bm25_search, hybrid_search, rrf_fuse, semantic_search
@@ -34,7 +34,8 @@ def retrieve(method: str, query: str, k: int = 5) -> list[Hit]:
 
 def hit_dict(h: Hit, with_content: bool = False) -> dict:
     d = {"control_id": h.control_id, "title": h.title, "group": h.group_title,
-         "score": round(h.score, 4), "semantic_rank": h.semantic_rank, "bm25_rank": h.bm25_rank}
+         "score": round(h.score, 4), "semantic_rank": h.semantic_rank, "bm25_rank": h.bm25_rank,
+         "via": h.via}
     if with_content:
         d["content"] = h.content
     return d
@@ -73,17 +74,24 @@ def run_stages(question: str, *, k: int = 5, use_guardrail: bool = True, generat
         yield {"stage": "result", "data": res.to_dict(), "obj": res}
         return
 
+    cw = crosswalk.analyse(question)
+    if cw.active:
+        yield {"stage": "crosswalk", "data": {"summary": cw.summary(), "forward": cw.forward,
+                                              "reverse": cw.reverse, "controls": cw.controls}}
+
     sem = semantic_search(question, CANDIDATES)
     bm = bm25_search(question, CANDIDATES)
     yield {"stage": "semantic", "data": {"hits": [hit_dict(h) for h in sem[:k]]}}
     yield {"stage": "bm25", "data": {"hits": [hit_dict(h) for h in bm[:k]]}}
     fused = rrf_fuse([sem, bm], k=CANDIDATES)
     yield {"stage": "fusion", "data": {"hits": [hit_dict(h) for h in fused[:k]]}}
-    ranked = rerank(question, fused, k=k)
-    top = ranked[0].score if ranked else None
+    base = rerank(question, fused, k=k)
+    top = base[0].score if base else None
     feature, _ = guardrail.load_calibration()
-    signal = guardrail.feature_value(feature, ranked, bm)
-    yield {"stage": "rerank", "data": {"hits": [hit_dict(h) for h in ranked]}}
+    signal = guardrail.feature_value(feature, base, bm)
+    yield {"stage": "rerank", "data": {"hits": [hit_dict(h) for h in base]}}
+    ranked = crosswalk.merge(cw, base, limit=CANDIDATES)
+    ranked = ranked[:crosswalk.context_size(ranked, k)]
 
     bypass = guardrail.structural_bypass(question)
     decision = guardrail.decide(question, signal, use_prefilter=use_guardrail, use_threshold=use_guardrail,

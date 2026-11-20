@@ -17,7 +17,7 @@ from datetime import date
 from pathlib import Path
 from typing import Callable
 
-from aegis import guardrail
+from aegis import crosswalk, guardrail
 from aegis.generate import DEFAULT_MODEL
 from aegis.guardrail import REFUSAL_TEXT
 from aegis.pipeline import CANDIDATES
@@ -42,11 +42,7 @@ def build_retrievers() -> dict[str, Callable[[str], list[Hit]]]:
     def hyb(q): return rrf_fuse([semantic_search(q, CANDIDATES), bm25_search(q, CANDIDATES)], k=20)
     def hyb_rr(q): return rerank(q, hyb(q), k=20)
     retrievers = {"semantic": sem, "bm25": bm, "hybrid": hyb, "hybrid_rerank": hyb_rr}
-    try:                                                   # Step 11 adds the crosswalk-aware method
-        from aegis.crosswalk import crosswalk_search
-        retrievers["hybrid_rerank_crosswalk"] = lambda q: crosswalk_search(q, hyb_rr)
-    except ImportError:
-        pass
+    retrievers["hybrid_rerank_crosswalk"] = lambda q: crosswalk.crosswalk_search(q, hyb_rr)
     return retrievers
 
 
@@ -126,7 +122,7 @@ def eval_generation(questions, hits_by_q, answerer, decisions_both, max_question
     complete = True
     for i, q in enumerate(order, 1):
         try:
-            ans = answerer(q["question"], hits_by_q[q["qid"]][:5])
+            ans = answerer(q["question"], hits_by_q[q["qid"]][:crosswalk.context_size(hits_by_q[q["qid"]], 5)])
         except DailyLimitReached as e:
             print(f"\nGroq daily limit reached after {i - 1} questions: {str(e)[:160]}")
             complete = False

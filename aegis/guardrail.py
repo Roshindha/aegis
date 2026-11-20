@@ -78,12 +78,9 @@ def structural_bypass(question: str) -> str | None:
     q = question.lower()
     if any(t in q for t in _group_titles()):
         return "group"
-    try:                                    # crosswalk detection lives in aegis.crosswalk (Step 11)
-        from aegis.crosswalk import detect_references
-        if detect_references(question):
-            return "crosswalk"
-    except ImportError:
-        pass
+    from aegis.crosswalk import detect_references      # lazy: crosswalk imports retrieve
+    if detect_references(question):
+        return "crosswalk"
     return None
 
 
