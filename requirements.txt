@@ -4,4 +4,6 @@ sentence-transformers
 psycopg[binary]
 pgvector
 rank-bm25
-groq
+groqfastapi
+uvicorn
+httpx
