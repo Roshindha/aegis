@@ -1,9 +1,11 @@
+# Direct runtime dependencies. Exact resolved versions live in constraints.txt.
 python-dotenv
-pytest
 sentence-transformers
+numpy
+rank-bm25
+groq
+fastapi
+uvicorn
+# Only needed for AEGIS_BACKEND=db (Supabase / pgvector); the default local backend does not use them.
 psycopg[binary]
 pgvector
-rank-bm25
-groqfastapi
-uvicorn
-httpx

@@ -1,0 +1,60 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements*.txt
+            constraints.txt
+      - name: Install (CPU torch, pinned)
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu -c constraints.txt
+          pip install -r requirements-dev.txt -c constraints.txt
+      - name: Unit tests (offline: fakes only, no network/DB/model downloads)
+        run: python -m pytest -q
+      - name: Benchmark is valid
+        run: python -m eval.validate
+
+  eval-gate:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements*.txt
+            constraints.txt
+      - name: Install (CPU torch, pinned)
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu -c constraints.txt
+          pip install -r requirements-dev.txt -c constraints.txt
+      - name: Cache model weights
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-models-bge-small-ms-marco-v1
+      - name: Download models
+        run: python -m scripts.download_models
+      - name: Retrieval-only eval (no API key needed)
+        run: python -m eval.run_eval --retrieval-only --out eval/results/ci
+      - name: Gate on committed floors
+        run: python -m eval.gate eval/results/ci.json
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results
+          path: eval/results/ci.*

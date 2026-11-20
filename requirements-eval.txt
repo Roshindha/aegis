@@ -1,0 +1,3 @@
+# Optional: RAGAS faithfulness / answer-relevancy scoring (python -m eval.run_eval --ragas N)
+-r requirements.txt
+ragas
