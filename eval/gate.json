@@ -1,0 +1,41 @@
+{
+  "note": "Floors sit a few points below the committed run in eval/results/final.json; raise them deliberately when the benchmark or system improves.",
+  "rules": [
+    {
+      "path": "retrieval.hybrid_rerank_crosswalk.overall.mrr",
+      "min": 0.9
+    },
+    {
+      "path": "retrieval.hybrid_rerank_crosswalk.overall.set_recall@20",
+      "min": 0.97
+    },
+    {
+      "path": "retrieval.hybrid_rerank_crosswalk.by_category.crosswalk.set_recall@20",
+      "min": 0.95
+    },
+    {
+      "path": "retrieval.hybrid_rerank_crosswalk.by_category.crosswalk_reverse.set_recall@5",
+      "min": 0.95
+    },
+    {
+      "path": "retrieval.hybrid_rerank.overall.mrr",
+      "min": 0.74
+    },
+    {
+      "path": "retrieval.hybrid_rerank.overall.set_recall@20",
+      "min": 0.85
+    },
+    {
+      "path": "guardrail.both_shipped_threshold.f1",
+      "min": 0.93
+    },
+    {
+      "path": "guardrail.both_heldout.f1",
+      "min": 0.92
+    },
+    {
+      "path": "guardrail.both_heldout.false_refusal_rate",
+      "max": 0.05
+    }
+  ]
+}

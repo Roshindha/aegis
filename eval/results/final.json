@@ -1,0 +1,1538 @@
+{
+  "date": "2026-11-20",
+  "commit": "02729f5+dirty",
+  "backend": "local",
+  "n_questions": 124,
+  "n_unverified": 124,
+  "final_system": "hybrid_rerank_crosswalk",
+  "retrieval": {
+    "semantic": {
+      "overall": {
+        "n": 98,
+        "n_unverified": 98,
+        "mrr": 0.5769144121184937,
+        "set_recall@5": 0.6381659157169361,
+        "set_recall@20": 0.7616573902288187,
+        "hit@5": 0.7040816326530612,
+        "hit@20": 0.7959183673469388
+      },
+      "by_category": {
+        "agency_param": {
+          "n": 6,
+          "n_unverified": 6,
+          "mrr": 0.9166666666666666,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "applicability": {
+          "n": 10,
+          "n_unverified": 10,
+          "mrr": 0.22833333333333333,
+          "set_recall@5": 0.5,
+          "set_recall@20": 0.7,
+          "hit@5": 0.5,
+          "hit@20": 0.7
+        },
+        "crosswalk": {
+          "n": 15,
+          "n_unverified": 15,
+          "mrr": 0.05111111111111111,
+          "set_recall@5": 0.035555555555555556,
+          "set_recall@20": 0.06555555555555556,
+          "hit@5": 0.13333333333333333,
+          "hit@20": 0.2
+        },
+        "crosswalk_reverse": {
+          "n": 5,
+          "n_unverified": 5,
+          "mrr": 0.12857142857142856,
+          "set_recall@5": 0.2,
+          "set_recall@20": 0.4,
+          "hit@5": 0.2,
+          "hit@20": 0.4
+        },
+        "exact_id": {
+          "n": 10,
+          "n_unverified": 10,
+          "mrr": 0.41114219114219114,
+          "set_recall@5": 0.5,
+          "set_recall@20": 0.9,
+          "hit@5": 0.5,
+          "hit@20": 0.9
+        },
+        "group_list": {
+          "n": 10,
+          "n_unverified": 10,
+          "mrr": 0.9199999999999999,
+          "set_recall@5": 0.5340259740259741,
+          "set_recall@20": 0.8659090909090909,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "multi_control": {
+          "n": 7,
+          "n_unverified": 7,
+          "mrr": 1.0,
+          "set_recall@5": 0.9523809523809524,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "no_level": {
+          "n": 13,
+          "n_unverified": 13,
+          "mrr": 0.5282051282051282,
+          "set_recall@5": 0.8461538461538461,
+          "set_recall@20": 0.9230769230769231,
+          "hit@5": 0.8461538461538461,
+          "hit@20": 0.9230769230769231
+        },
+        "paraphrase": {
+          "n": 22,
+          "n_unverified": 22,
+          "mrr": 0.9166666666666667,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        }
+      }
+    },
+    "bm25": {
+      "overall": {
+        "n": 98,
+        "n_unverified": 98,
+        "mrr": 0.7613544335483111,
+        "set_recall@5": 0.7844159525281975,
+        "set_recall@20": 0.8656462585034013,
+        "hit@5": 0.8469387755102041,
+        "hit@20": 0.8979591836734694
+      },
+      "by_category": {
+        "agency_param": {
+          "n": 6,
+          "n_unverified": 6,
+          "mrr": 1.0,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "applicability": {
+          "n": 10,
+          "n_unverified": 10,
+          "mrr": 1.0,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "crosswalk": {
+          "n": 15,
+          "n_unverified": 15,
+          "mrr": 0.12113997113997114,
+          "set_recall@5": 0.1611111111111111,
+          "set_recall@20": 0.24444444444444444,
+          "hit@5": 0.26666666666666666,
+          "hit@20": 0.4
+        },
+        "crosswalk_reverse": {
+          "n": 5,
+          "n_unverified": 5,
+          "mrr": 0.4,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "exact_id": {
+          "n": 10,
+          "n_unverified": 10,
+          "mrr": 0.9,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "group_list": {
+          "n": 10,
+          "n_unverified": 10,
+          "mrr": 0.8833333333333334,
+          "set_recall@5": 0.6289430014430015,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "multi_control": {
+          "n": 7,
+          "n_unverified": 7,
+          "mrr": 0.875,
+          "set_recall@5": 0.7380952380952381,
+          "set_recall@20": 0.880952380952381,
+          "hit@5": 0.8571428571428571,
+          "hit@20": 1.0
+        },
+        "no_level": {
+          "n": 13,
+          "n_unverified": 13,
+          "mrr": 1.0,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "paraphrase": {
+          "n": 22,
+          "n_unverified": 22,
+          "mrr": 0.8107864357864358,
+          "set_recall@5": 0.8636363636363636,
+          "set_recall@20": 0.9545454545454546,
+          "hit@5": 0.8636363636363636,
+          "hit@20": 0.9545454545454546
+        }
+      }
+    },
+    "hybrid": {
+      "overall": {
+        "n": 98,
+        "n_unverified": 98,
+        "mrr": 0.7352900684083157,
+        "set_recall@5": 0.7675431427982449,
+        "set_recall@20": 0.8774659863945578,
+        "hit@5": 0.826530612244898,
+        "hit@20": 0.9081632653061225
+      },
+      "by_category": {
+        "agency_param": {
+          "n": 6,
+          "n_unverified": 6,
+          "mrr": 0.9166666666666666,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "applicability": {
+          "n": 10,
+          "n_unverified": 10,
+          "mrr": 0.6976190476190476,
+          "set_recall@5": 0.9,
+          "set_recall@20": 1.0,
+          "hit@5": 0.9,
+          "hit@20": 1.0
+        },
+        "crosswalk": {
+          "n": 15,
+          "n_unverified": 15,
+          "mrr": 0.1270697167755991,
+          "set_recall@5": 0.03888888888888888,
+          "set_recall@20": 0.20777777777777778,
+          "hit@5": 0.13333333333333333,
+          "hit@20": 0.4
+        },
+        "crosswalk_reverse": {
+          "n": 5,
+          "n_unverified": 5,
+          "mrr": 0.40857142857142853,
+          "set_recall@5": 0.8,
+          "set_recall@20": 1.0,
+          "hit@5": 0.8,
+          "hit@20": 1.0
+        },
+        "exact_id": {
+          "n": 10,
+          "n_unverified": 10,
+          "mrr": 0.7,
+          "set_recall@5": 0.9,
+          "set_recall@20": 1.0,
+          "hit@5": 0.9,
+          "hit@20": 1.0
+        },
+        "group_list": {
+          "n": 10,
+          "n_unverified": 10,
+          "mrr": 0.95,
+          "set_recall@5": 0.6469227994227994,
+          "set_recall@20": 0.9875,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "multi_control": {
+          "n": 7,
+          "n_unverified": 7,
+          "mrr": 1.0,
+          "set_recall@5": 0.880952380952381,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "no_level": {
+          "n": 13,
+          "n_unverified": 13,
+          "mrr": 0.9384615384615385,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "paraphrase": {
+          "n": 22,
+          "n_unverified": 22,
+          "mrr": 0.9060606060606061,
+          "set_recall@5": 0.9545454545454546,
+          "set_recall@20": 1.0,
+          "hit@5": 0.9545454545454546,
+          "hit@20": 1.0
+        }
+      }
+    },
+    "hybrid_rerank": {
+      "overall": {
+        "n": 98,
+        "n_unverified": 98,
+        "mrr": 0.7698250728862973,
+        "set_recall@5": 0.8046584651176488,
+        "set_recall@20": 0.8774659863945578,
+        "hit@5": 0.8469387755102041,
+        "hit@20": 0.9081632653061225
+      },
+      "by_category": {
+        "agency_param": {
+          "n": 6,
+          "n_unverified": 6,
+          "mrr": 1.0,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "applicability": {
+          "n": 10,
+          "n_unverified": 10,
+          "mrr": 0.95,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "crosswalk": {
+          "n": 15,
+          "n_unverified": 15,
+          "mrr": 0.05952380952380952,
+          "set_recall@5": 0.04444444444444444,
+          "set_recall@20": 0.20777777777777778,
+          "hit@5": 0.06666666666666667,
+          "hit@20": 0.4
+        },
+        "crosswalk_reverse": {
+          "n": 5,
+          "n_unverified": 5,
+          "mrr": 0.54,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "exact_id": {
+          "n": 10,
+          "n_unverified": 10,
+          "mrr": 1.0,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "group_list": {
+          "n": 10,
+          "n_unverified": 10,
+          "mrr": 0.85,
+          "set_recall@5": 0.6523196248196248,
+          "set_recall@20": 0.9875,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "multi_control": {
+          "n": 7,
+          "n_unverified": 7,
+          "mrr": 1.0,
+          "set_recall@5": 0.9523809523809524,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "no_level": {
+          "n": 13,
+          "n_unverified": 13,
+          "mrr": 0.8846153846153846,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "paraphrase": {
+          "n": 22,
+          "n_unverified": 22,
+          "mrr": 0.8795454545454546,
+          "set_recall@5": 0.9545454545454546,
+          "set_recall@20": 1.0,
+          "hit@5": 0.9545454545454546,
+          "hit@20": 1.0
+        }
+      }
+    },
+    "hybrid_rerank_crosswalk": {
+      "overall": {
+        "n": 98,
+        "n_unverified": 98,
+        "mrr": 0.9372448979591836,
+        "set_recall@5": 0.9509169685190093,
+        "set_recall@20": 0.9987244897959183,
+        "hit@5": 0.9897959183673469,
+        "hit@20": 1.0
+      },
+      "by_category": {
+        "agency_param": {
+          "n": 6,
+          "n_unverified": 6,
+          "mrr": 1.0,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "applicability": {
+          "n": 10,
+          "n_unverified": 10,
+          "mrr": 0.95,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "crosswalk": {
+          "n": 15,
+          "n_unverified": 15,
+          "mrr": 1.0,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "crosswalk_reverse": {
+          "n": 5,
+          "n_unverified": 5,
+          "mrr": 1.0,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "exact_id": {
+          "n": 10,
+          "n_unverified": 10,
+          "mrr": 1.0,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "group_list": {
+          "n": 10,
+          "n_unverified": 10,
+          "mrr": 0.85,
+          "set_recall@5": 0.6523196248196248,
+          "set_recall@20": 0.9875,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "multi_control": {
+          "n": 7,
+          "n_unverified": 7,
+          "mrr": 1.0,
+          "set_recall@5": 0.9523809523809524,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "no_level": {
+          "n": 13,
+          "n_unverified": 13,
+          "mrr": 0.8846153846153846,
+          "set_recall@5": 1.0,
+          "set_recall@20": 1.0,
+          "hit@5": 1.0,
+          "hit@20": 1.0
+        },
+        "paraphrase": {
+          "n": 22,
+          "n_unverified": 22,
+          "mrr": 0.8795454545454546,
+          "set_recall@5": 0.9545454545454546,
+          "set_recall@20": 1.0,
+          "hit@5": 0.9545454545454546,
+          "hit@20": 1.0
+        }
+      }
+    }
+  },
+  "guardrail": {
+    "none": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 26,
+      "false_refusal_rate": 0.0,
+      "n": 124,
+      "n_unverified": 124
+    },
+    "prefilter_only": {
+      "precision": 1.0,
+      "recall": 0.8461538461538461,
+      "f1": 0.9166666666666666,
+      "tp": 22,
+      "fp": 0,
+      "fn": 4,
+      "false_refusal_rate": 0.0,
+      "n": 124,
+      "n_unverified": 124
+    },
+    "threshold_rerank_only_heldout": {
+      "precision": 0.7142857142857143,
+      "recall": 0.7692307692307693,
+      "f1": 0.7407407407407408,
+      "tp": 20,
+      "fp": 8,
+      "fn": 6,
+      "false_refusal_rate": 0.08163265306122448,
+      "n": 124,
+      "n_unverified": 124
+    },
+    "threshold_only_heldout": {
+      "precision": 0.9523809523809523,
+      "recall": 0.7692307692307693,
+      "f1": 0.8510638297872339,
+      "tp": 20,
+      "fp": 1,
+      "fn": 6,
+      "false_refusal_rate": 0.01020408163265306,
+      "n": 124,
+      "n_unverified": 124
+    },
+    "both_heldout": {
+      "precision": 0.9615384615384616,
+      "recall": 0.9615384615384616,
+      "f1": 0.9615384615384616,
+      "tp": 25,
+      "fp": 1,
+      "fn": 1,
+      "false_refusal_rate": 0.01020408163265306,
+      "n": 124,
+      "n_unverified": 124
+    },
+    "both_shipped_threshold": {
+      "precision": 1.0,
+      "recall": 0.9615384615384616,
+      "f1": 0.9803921568627451,
+      "tp": 25,
+      "fp": 0,
+      "fn": 1,
+      "false_refusal_rate": 0.0,
+      "n": 124,
+      "n_unverified": 124
+    }
+  },
+  "threshold": {
+    "feature": "bm25_top1",
+    "threshold": 7.0827,
+    "method": "for each candidate feature: maximise abstention F1 over midpoints of observed scores; choose the feature with the best stratified 5-fold CV held-out F1 (seed 13); shipped threshold fitted on all non-bypassed questions",
+    "n_questions": 80,
+    "n_should_refuse": 26,
+    "n_excluded_bypass": 44,
+    "n_unverified": 80,
+    "candidates": {
+      "rerank_top1": {
+        "threshold": -6.6067,
+        "cv_heldout": {
+          "precision": 0.4815,
+          "recall": 0.5,
+          "f1": 0.4906,
+          "fold_thresholds": [
+            -1.729,
+            -0.74,
+            -8.205,
+            -6.607,
+            -6.607
+          ]
+        },
+        "in_sample": {
+          "precision": 0.7368,
+          "recall": 0.5385,
+          "f1": 0.6222
+        }
+      },
+      "bm25_top1": {
+        "threshold": 7.0827,
+        "cv_heldout": {
+          "precision": 0.9524,
+          "recall": 0.7692,
+          "f1": 0.8511,
+          "fold_thresholds": [
+            7.083,
+            7.083,
+            7.083,
+            7.426,
+            7.071
+          ]
+        },
+        "in_sample": {
+          "precision": 1.0,
+          "recall": 0.7692,
+          "f1": 0.8696
+        }
+      }
+    },
+    "date": "2026-11-20"
+  },
+  "model": "openai/gpt-oss-20b",
+  "generation": {
+    "complete": true,
+    "n_answered": 124,
+    "n_total": 124,
+    "configs": {
+      "no_guardrail": {
+        "answerable": {
+          "n": 98,
+          "n_unverified": 98,
+          "correct": 0.8775510204081632,
+          "false_refusal": 0.04081632653061224,
+          "has_citation": 0.6808510638297872,
+          "citations_valid": 1.0,
+          "gold_cited_recall": 0.677304964539007
+        },
+        "cited_id_validity": 1.0,
+        "abstention": {
+          "precision": 0.8620689655172413,
+          "recall": 0.9615384615384616,
+          "f1": 0.9090909090909091,
+          "tp": 25,
+          "fp": 4,
+          "fn": 1,
+          "n": 124,
+          "n_unverified": 124
+        },
+        "out_of_scope_correct": {
+          "n": 26,
+          "n_unverified": 26,
+          "correct": 0.9615384615384616
+        },
+        "by_category": {
+          "agency_param": {
+            "n": 6,
+            "n_unverified": 6,
+            "correct": 1.0
+          },
+          "applicability": {
+            "n": 10,
+            "n_unverified": 10,
+            "correct": 1.0
+          },
+          "crosswalk": {
+            "n": 15,
+            "n_unverified": 15,
+            "correct": 1.0
+          },
+          "crosswalk_reverse": {
+            "n": 5,
+            "n_unverified": 5,
+            "correct": 1.0
+          },
+          "exact_id": {
+            "n": 10,
+            "n_unverified": 10,
+            "correct": 1.0
+          },
+          "group_list": {
+            "n": 10,
+            "n_unverified": 10,
+            "correct": 0.3
+          },
+          "multi_control": {
+            "n": 7,
+            "n_unverified": 7,
+            "correct": 0.8571428571428571
+          },
+          "no_level": {
+            "n": 13,
+            "n_unverified": 13,
+            "correct": 0.7692307692307693
+          },
+          "out_of_scope": {
+            "n": 26,
+            "n_unverified": 26,
+            "correct": 0.9615384615384616
+          },
+          "paraphrase": {
+            "n": 22,
+            "n_unverified": 22,
+            "correct": 0.9545454545454546
+          }
+        }
+      },
+      "guardrail": {
+        "answerable": {
+          "n": 98,
+          "n_unverified": 98,
+          "correct": 0.8775510204081632,
+          "false_refusal": 0.04081632653061224,
+          "has_citation": 0.6808510638297872,
+          "citations_valid": 1.0,
+          "gold_cited_recall": 0.677304964539007
+        },
+        "cited_id_validity": 1.0,
+        "abstention": {
+          "precision": 0.8666666666666667,
+          "recall": 1.0,
+          "f1": 0.9285714285714286,
+          "tp": 26,
+          "fp": 4,
+          "fn": 0,
+          "n": 124,
+          "n_unverified": 124
+        },
+        "out_of_scope_correct": {
+          "n": 26,
+          "n_unverified": 26,
+          "correct": 1.0
+        },
+        "by_category": {
+          "agency_param": {
+            "n": 6,
+            "n_unverified": 6,
+            "correct": 1.0
+          },
+          "applicability": {
+            "n": 10,
+            "n_unverified": 10,
+            "correct": 1.0
+          },
+          "crosswalk": {
+            "n": 15,
+            "n_unverified": 15,
+            "correct": 1.0
+          },
+          "crosswalk_reverse": {
+            "n": 5,
+            "n_unverified": 5,
+            "correct": 1.0
+          },
+          "exact_id": {
+            "n": 10,
+            "n_unverified": 10,
+            "correct": 1.0
+          },
+          "group_list": {
+            "n": 10,
+            "n_unverified": 10,
+            "correct": 0.3
+          },
+          "multi_control": {
+            "n": 7,
+            "n_unverified": 7,
+            "correct": 0.8571428571428571
+          },
+          "no_level": {
+            "n": 13,
+            "n_unverified": 13,
+            "correct": 0.7692307692307693
+          },
+          "out_of_scope": {
+            "n": 26,
+            "n_unverified": 26,
+            "correct": 1.0
+          },
+          "paraphrase": {
+            "n": 22,
+            "n_unverified": 22,
+            "correct": 0.9545454545454546
+          }
+        }
+      }
+    },
+    "answers": {
+      "cur-out_of_scope-003": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-applicability-006": {
+        "text": "The applicability level of AS‑10 for low‑risk systems is **Level 2 (good‑to‑have)** [AS-10].",
+        "cited": [
+          "AS-10"
+        ],
+        "invalid": []
+      },
+      "gen-group_list-010": {
+        "text": "The controls in the Container Security group are:\n\n- CS-9: Container Orchestrator API Access Control  \n- CS-10: Container Workload Segmentation  \n- CS-11: Container Runtime Security  \n- CS-3: Runtime Container Secrets  \n- CS-8: Private Container Image Registries",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-multi_control-005": {
+        "text": "The controls that mandate multi‑factor authentication or Singpass/Corppass are:\n\n- **AC‑2** – requires MFA for privileged accounts at login.  \n- **AC‑7** – requires Singpass or Corppass MFA for external users.  \n- **AC‑12** – requires MFA at the Single‑Sign‑On (SSO) identity provider.  \n\n[AC‑2][AC‑7][AC‑12]",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-applicability-008": {
+        "text": "The applicability level of LM‑20 for low‑risk systems is **Level 2 (good‑to‑have)** [LM-20].",
+        "cited": [
+          "LM-20"
+        ],
+        "invalid": []
+      },
+      "cur-paraphrase-013": {
+        "text": "No. The Kubernetes API endpoint should not be reachable from the public internet. The control CS‑9 requires disabling public access to Container Orchestrator API endpoints and restricting them to specific address ranges or private‑cluster configurations. [CS-9]",
+        "cited": [
+          "CS-9"
+        ],
+        "invalid": []
+      },
+      "gen-crosswalk-008": {
+        "text": "The only IM8 Reform control that references MVSP 3.4 is **ST‑5: Vulnerability Management**. [ST-5]",
+        "cited": [
+          "ST-5"
+        ],
+        "invalid": []
+      },
+      "gen-crosswalk-004": {
+        "text": "The IM8 Reform controls that reference MVSP 1.6 are:\n\n- DP‑1: Data Residency [DP‑1]  \n- DP‑4: Government on Commercial Cloud (GCC) [DP‑4]  \n- PM‑5: Central Submission of Approved System Security Plan (SSP) [PM‑5]",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-exact_id-007": {
+        "text": "LM‑20 requires the implementation of User and Entity Behaviour Analytics (UEBA) to monitor and analyse user activities for suspicious behaviour and potential threats. It mandates selecting a UEBA tool that integrates with existing SIEM solutions and provides real‑time alerts for anomalous activities, with regular updates and tuning to enhance detection capabilities. The control is applicable at Level 2 for low‑risk systems (good‑to‑have). [LM-20]",
+        "cited": [
+          "LM-20"
+        ],
+        "invalid": []
+      },
+      "gen-applicability-001": {
+        "text": "The applicability level of AS‑3 for medium‑risk systems is **Level 0 (must‑have)**. [AS-3]",
+        "cited": [
+          "AS-3"
+        ],
+        "invalid": []
+      },
+      "cur-out_of_scope-022": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-out_of_scope-012": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-no_level-009": {
+        "text": "TP‑4 has no profile level assigned in this catalogue release. [TP-4]",
+        "cited": [
+          "TP-4"
+        ],
+        "invalid": []
+      },
+      "cur-multi_control-003": {
+        "text": "The controls that address logging and monitoring of database activity are:\n\n- **LM‑13: Anomalous Database Activity Monitoring** – monitors database activities for anomalous behaviour such as unusual authentication attempts or abnormal read/write operations. [LM‑13]  \n- **LM‑5: Database Logging** – logs database audit events, enabling tracking of authorised and unauthorised activities. [LM‑5]",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-out_of_scope-017": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-crosswalk_reverse-002": {
+        "text": "AC‑12 references the following external controls: NIST SP 800‑53 IA‑2(10) – Single Sign‑On. No MVSP, CIS, SLSA or CCM references are listed in the control text.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-paraphrase-016": {
+        "text": "Administrators’ laptops should be hardened and only allowed to connect via secure remote‑administration tools.  \nUse an Endpoint Management platform to enforce hardening and deny access if the posture is not met [AC-5].  \nRemote access should be performed through a remote‑administration service (e.g., AWS Systems Manager Session Manager) rather than direct SSH/RDP, with short‑lived certificates and monitoring [IS-6].  \nAdministrator privileges on the laptop should be restricted by disabling root/administrator remote logins and limiting sudo/group access [IS-3].  \nAll remote connections must use strong authentication, MFA, device‑based access control, and be logged and encrypted, with periodic re‑authentication and lockout policies [NS-10, AC-10].",
+        "cited": [
+          "AC-5",
+          "IS-6",
+          "IS-3"
+        ],
+        "invalid": []
+      },
+      "cur-paraphrase-001": {
+        "text": "Use parameterised interfaces for database queries or system commands, which ensures that query parameters are properly sanitised and prevents injection attacks. This approach eliminates the need to build queries by concatenating strings. [AS-2]",
+        "cited": [
+          "AS-2"
+        ],
+        "invalid": []
+      },
+      "cur-out_of_scope-016": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-multi_control-002": {
+        "text": "The controls that cover signing software artefacts and verifying the signatures are:\n\n- **SC‑7: Software Artefact Signing** – requires signing software artefacts such as code and container images during build. [SC-7]  \n- **SC‑8: Software Artefact Signature Verification** – requires verifying the signatures of code and artefacts before deployment or runtime. [SC-8]",
+        "cited": [
+          "SC-7",
+          "SC-8"
+        ],
+        "invalid": []
+      },
+      "gen-crosswalk-014": {
+        "text": "The IM8 Reform controls that reference **SLSA Build L1** are:\n\n- **CS‑1: Unique Base Container Image Tags** – cites “SLSA Build L1: Provenance exists” [CS-1].\n- **SC‑4: Dependency Manifest Version Pinning** – cites “SLSA Build L1: Provenance exists” [SC-4].\n- **SC‑5: Build and Release Process** – cites “SLSA Build L1: Provenance exists” [SC-5].\n- **SC‑6: Dependency Installation during Deployment** – cites “SLSA Build L1: Provenance exists” [SC-6].",
+        "cited": [
+          "CS-1",
+          "SC-4",
+          "SC-5",
+          "SC-6"
+        ],
+        "invalid": []
+      },
+      "gen-no_level-002": {
+        "text": "BR‑4 has no profile level assigned in this catalogue release. [BR-4]",
+        "cited": [
+          "BR-4"
+        ],
+        "invalid": []
+      },
+      "cur-paraphrase-012": {
+        "text": "Built container images should be stored in private container registries, such as Amazon ECR private registry, to keep proprietary code or sensitive information secure. [CS-8]",
+        "cited": [
+          "CS-8"
+        ],
+        "invalid": []
+      },
+      "cur-agency_param-006": {
+        "text": "Primary data must be kept in the country defined by the agency. [DP-1]",
+        "cited": [
+          "DP-1"
+        ],
+        "invalid": []
+      },
+      "gen-exact_id-002": {
+        "text": "AC‑9 requires implementing and maintaining an endpoint device management solution to ensure the security and integrity of endpoint devices used within the organisation. This includes managing, monitoring, and securely configuring devices, enforcing disk encryption, managing configuration, ensuring regular updates, and enabling remote wipe in case of loss or theft. [AC-9]",
+        "cited": [
+          "AC-9"
+        ],
+        "invalid": []
+      },
+      "cur-out_of_scope-021": {
+        "text": "I’m sorry, but I can’t comply with that.",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-group_list-005": {
+        "text": "The controls in the **Third Party Management** group are:\n\n- TP-4: Attestation Report Review  \n- TP-2: Third Party Audit  \n- TP-3: Scope for Offshoring  \n- TP-5: Qualified Offshore Development Centre",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-applicability-004": {
+        "text": "The applicability level of PM‑3 for low‑risk systems is **Level 0 (must‑have)** [PM-3].",
+        "cited": [
+          "PM-3"
+        ],
+        "invalid": []
+      },
+      "gen-no_level-012": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-out_of_scope-006": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-multi_control-007": {
+        "text": "The controls that cover sanitising and destroying storage devices are:\n\n- **DP-5: Sanitisation** – requires sanitising all hardware that stores data at rest and shredding or incinerating storage meant for retirement. [DP-5]  \n- **DP-6: Witness Sanitisation and Destruction of Storage Devices** – requires witnessing the sanitisation and destruction process to ensure data is removed from storage. [DP-6]",
+        "cited": [
+          "DP-5",
+          "DP-6"
+        ],
+        "invalid": []
+      },
+      "gen-applicability-010": {
+        "text": "The applicability level of TP‑5 for low‑risk systems is **Level 1 (should‑have)**. [TP-5]",
+        "cited": [
+          "TP-5"
+        ],
+        "invalid": []
+      },
+      "gen-crosswalk-001": {
+        "text": "The only IM8 Reform control that references CCM BCR‑09 is **BR‑4: Disaster Recovery Plan**.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-out_of_scope-024": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-crosswalk-002": {
+        "text": "The only IM8 Reform control that references CCM TVM‑09 is **ST‑3: Public Vulnerability Disclosure Programme**. [ST-3]",
+        "cited": [
+          "ST-3"
+        ],
+        "invalid": []
+      },
+      "gen-applicability-005": {
+        "text": "The applicability level of AS‑2 for medium‑risk systems is **Level 1 (should‑have)**. [AS-2]",
+        "cited": [
+          "AS-2"
+        ],
+        "invalid": []
+      },
+      "gen-exact_id-006": {
+        "text": "DP‑6 requires that the sanitisation and destruction of storage devices be witnessed by agency staff to ensure that data is fully removed from the device. This involves establishing a standard operating procedure (SOP) for witnessing the process. The control also states that witnessing eliminates the possibility of unauthorised or unintended data retention. [DP-6]",
+        "cited": [
+          "DP-6"
+        ],
+        "invalid": []
+      },
+      "gen-group_list-003": {
+        "text": "The controls in the **Backup and Recovery** group are:\n\n- BR-1: Backup  \n- BR-2: Recovery Testing  \n- BR-3: Backup Retention  \n- BR-4: Disaster Recovery Plan",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-no_level-003": {
+        "text": "CK‑3 has no profile level assigned in this catalogue release. [CK-3]",
+        "cited": [
+          "CK-3"
+        ],
+        "invalid": []
+      },
+      "cur-paraphrase-004": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-paraphrase-003": {
+        "text": "API keys and database credentials should be stored in a secure secrets‑management solution that enforces access control, encryption and monitoring, rather than in source code or configuration files. Use cloud‑native tools such as AWS Secrets Manager, Azure Key Vault, or cloud‑agnostic options like HashiCorp Vault or CyberArk Conjur, and for containerised workloads provide them at runtime via Docker secrets or similar mechanisms. This approach protects the credentials from exposure and ensures they can be rotated or revoked as needed. [AS-8] [CS-3]",
+        "cited": [
+          "AS-8",
+          "CS-3"
+        ],
+        "invalid": []
+      },
+      "cur-paraphrase-006": {
+        "text": "Yes. The control SD‑2 requires configuring the code repository to prevent pushes, including force pushes, to the default branch, which is the main branch in most workflows. This is a should‑have for low‑ and medium‑risk systems, so developers should be blocked from force‑overwriting the main branch. [SD-2]",
+        "cited": [
+          "SD-2"
+        ],
+        "invalid": []
+      },
+      "cur-multi_control-006": {
+        "text": "The controls that address domain name registration and DNS security are:\n\n- **IS‑11: Central Domain Name Registration** – governs the registration of .gov.sg and .edu.sg domains with GovTech as the sole registrar. [IS-11]  \n- **IS‑13: Defensive Domain Name Registration** – requires registration of second‑ and third‑level domain variants to prevent phishing and spoofing. [IS-13]  \n- **IS‑12: DNS Security Extensions (DNSSEC)** – mandates the implementation of DNSSEC for public DNS records and servers to protect against spoofing and cache‑poisoning attacks. [IS-12]",
+        "cited": [
+          "IS-11",
+          "IS-13",
+          "IS-12"
+        ],
+        "invalid": []
+      },
+      "gen-crosswalk_reverse-004": {
+        "text": "AS‑12 references the NIST standard NIST SP 800‑53 SI‑3: Malicious Code Protection. No other MVSP, CIS, SLSA or CCM references are listed in the control text.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-out_of_scope-018": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-group_list-004": {
+        "text": "The controls in the **Security Testing** group are:\n\n- **ST-4: Security Testing Programme**  \n- **ST-5: Vulnerability Management**",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-out_of_scope-010": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-paraphrase-019": {
+        "text": "Yes. The IM8 catalogue requires that data at rest be encrypted on low‑risk and medium‑risk systems, as stated in control DP‑2: “Encrypt data at rest.” [DP-2]",
+        "cited": [
+          "DP-2"
+        ],
+        "invalid": []
+      },
+      "gen-applicability-002": {
+        "text": "The applicability level of AC‑4 for medium‑risk systems is **Level 1 (should‑have)**. [AC-4]",
+        "cited": [
+          "AC-4"
+        ],
+        "invalid": []
+      },
+      "cur-paraphrase-020": {
+        "text": "No – logs should not be kept on the same machine that generated them. The control LM‑1 states that logs must be stored in a different system or component than the one that produced them to reduce tampering and unauthorized access risks. [LM‑1]",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-no_level-010": {
+        "text": "TP‑6 has no profile level assigned in this catalogue release. [TP-6]",
+        "cited": [
+          "TP-6"
+        ],
+        "invalid": []
+      },
+      "cur-paraphrase-005": {
+        "text": "Yes. The IM8 controls require that uploaded files be scanned for malware before further processing or use by the system or its users. This is specified in control AS‑12: “Scan file uploads for malware before further processing by the system or users.” [AS-12]",
+        "cited": [
+          "AS-12"
+        ],
+        "invalid": []
+      },
+      "cur-paraphrase-017": {
+        "text": "Yes. The IM8 controls require Multi‑Factor Authentication (MFA) for privileged accounts at login, which includes admin accounts. This is a must‑have for medium‑risk systems and a should‑have for low‑risk systems. [AC-2]",
+        "cited": [
+          "AC-2"
+        ],
+        "invalid": []
+      },
+      "gen-crosswalk-010": {
+        "text": "The following IM8 Reform controls reference MVSP 4.4:  \n- BR‑1: Backup [BR-1]  \n- BR‑2: Recovery Testing [BR-2]  \n- BR‑3: Backup Retention [BR-3]  \n- BR‑4: Disaster Recovery Plan [BR-4]",
+        "cited": [
+          "BR-1",
+          "BR-2",
+          "BR-3",
+          "BR-4"
+        ],
+        "invalid": []
+      },
+      "gen-crosswalk-005": {
+        "text": "The IM8 Reform controls that reference **MVSP 2.4** are:\n\n- **AS‑4: Authentication Mechanism Rate‑Limiting** [AS‑4]  \n- **AS‑5: Password Requirements** [AS‑5]  \n- **AS‑6: Password Salting and Hashing** [AS‑6]",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-no_level-004": {
+        "text": "DP‑7 has no profile level assigned in this catalogue release. [DP-7]",
+        "cited": [
+          "DP-7"
+        ],
+        "invalid": []
+      },
+      "gen-exact_id-005": {
+        "text": "CS‑11 requires that changes to running containers be detected and remediated using container‑runtime protection tools, such as AWS EKS Protection, Microsoft Defender for Containers, or Falco. These tools must monitor threats and changes, isolate vulnerable instances for investigation, and replace them with rebuilt and patched images, or with an uncompromised image until a patch is available. This control replaces traditional Malware Protection (IS‑7) and EDR (IS‑8) in container environments. [CS-11]",
+        "cited": [
+          "CS-11"
+        ],
+        "invalid": []
+      },
+      "cur-out_of_scope-007": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-applicability-003": {
+        "text": "The applicability level of CS‑6 for low‑risk systems is **Level 2 (good‑to‑have)** [CS‑6].",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-agency_param-005": {
+        "text": "Cryptographic keys must be rotated on a schedule that is defined by the agency; the catalogue specifies “Rotate cryptographic keys every [agency-defined: time period (days)] days” [CK-2].",
+        "cited": [
+          "CK-2"
+        ],
+        "invalid": []
+      },
+      "gen-crosswalk-012": {
+        "text": "The only IM8 Reform control that references NIST SP 800‑53 IA‑5(7) is **AS‑8: Secrets Management** [AS-8].",
+        "cited": [
+          "AS-8"
+        ],
+        "invalid": []
+      },
+      "gen-no_level-008": {
+        "text": "TP‑2 has no profile level assigned in this catalogue release. [TP-2]",
+        "cited": [
+          "TP-2"
+        ],
+        "invalid": []
+      },
+      "gen-no_level-001": {
+        "text": "The control AC‑15 has no profile level assigned in this catalogue release. [AC-15]",
+        "cited": [
+          "AC-15"
+        ],
+        "invalid": []
+      },
+      "gen-crosswalk-006": {
+        "text": "The IM8 Reform controls that reference MVSP 2.7 are:\n\n- LM‑1: Separate Log Storage [LM‑1]  \n- LM‑4: Audit Logging [LM‑4]  \n- LM‑5: Database Logging [LM‑5]  \n- LM‑6: Access Logging [LM‑6]  \n- LM‑8: Security Log Retention [LM‑8]",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-paraphrase-015": {
+        "text": "Yes. According to IS‑14, you must register and use whitelisted SMS Sender IDs with the Singapore SMS Sender ID Registry before sending SMSes to members of the public. [IS‑14]",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-paraphrase-008": {
+        "text": "Yes. The IM8 catalogue requires that Continuous Integration (CI) tests pass before code can be merged into the default branch. This is specified in control SD‑3, which states that CI tests must pass before merging. [SD-3]",
+        "cited": [
+          "SD-3"
+        ],
+        "invalid": []
+      },
+      "cur-agency_param-003": {
+        "text": "The interval between backups is agency‑defined; the catalogue specifies that backups must occur “at least every [agency-defined: time period (days)] day(s)” [BR-1].",
+        "cited": [
+          "BR-1"
+        ],
+        "invalid": []
+      },
+      "cur-out_of_scope-026": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-crosswalk_reverse-005": {
+        "text": "LM‑1 references the following external standards: MVSP 2.7: Logging, NIST SP 800‑53 AU‑9(2) – Store on Separate Physical Systems or Components, and the IM8 On‑Premise IS (Non‑S) 7.2/S8. [LM-1]",
+        "cited": [
+          "LM-1"
+        ],
+        "invalid": []
+      },
+      "gen-exact_id-008": {
+        "text": "NS‑2 requires that access to cloud‑service‑provider resources outside a virtual network (e.g., Lambda, DynamoDB, API Gateway, S3, CloudFront) be restricted using access controls or application‑layer authorisation. This includes applying IAM policies for DynamoDB and S3, using Lambda authorisers or middleware for API Gateway, and creating private APIs when exposed to private subnets. The control also specifies that access through interface VPC endpoints is only needed if the client is in a private subnet. [NS-2]",
+        "cited": [
+          "NS-2"
+        ],
+        "invalid": []
+      },
+      "gen-exact_id-001": {
+        "text": "AC‑7 requires that Singpass or Corppass multi‑factor authentication (MFA) be used for digital services that need a high level of identity assurance for external users, such as citizens, while internal users should use a government‑managed single sign‑on solution like WOG AAD. [AC-7]",
+        "cited": [
+          "AC-7"
+        ],
+        "invalid": []
+      },
+      "gen-crosswalk-015": {
+        "text": "The IM8 Reform controls that reference **SLSA Build L2** are:\n\n- **SC‑7: Software Artefact Signing** – cites “SLSA Build L2: Hosted build platform” [SC-7].\n- **SC‑8: Software Artefact Signature Verification** – cites “SLSA Build L2: Hosted build platform” [SC-8].",
+        "cited": [
+          "SC-7",
+          "SC-8"
+        ],
+        "invalid": []
+      },
+      "gen-exact_id-010": {
+        "text": "ST‑4 requires that a security testing programme be conducted and documented by internal teams or independent external parties on an agency‑defined schedule, with the type of testing and the frequency of testing left to the agency. The programme must be performed for low‑risk systems as a Level 1 (should‑have) control and for medium‑risk systems as a Level 0 (must‑have) control. Guidance directs organisations to refer to the WOG Security Testing Guidelines and, where applicable, to obtain a passing rating from the Government Bug Bounty Programme or use past penetration testing reports for SaaS. The control emphasises that without such testing, undetected security weaknesses increase the risk of exploitation, data breaches, and unauthorised access. [ST-4]",
+        "cited": [
+          "ST-4"
+        ],
+        "invalid": []
+      },
+      "cur-out_of_scope-013": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-paraphrase-002": {
+        "text": "Apply rate‑limiting on the authentication mechanism to deter brute‑force attempts, such as limiting to a maximum of 3 consecutive failed log‑ins within 15 minutes and adding time delays or CAPTCHA after repeated failures. This reduces the likelihood that attackers can guess passwords repeatedly on the login page. [AS-4]",
+        "cited": [
+          "AS-4"
+        ],
+        "invalid": []
+      },
+      "cur-out_of_scope-025": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-crosswalk-007": {
+        "text": "The IM8 Reform controls that reference MVSP 2.8 are:\n\n- DP‑2: Data at Rest Encryption [DP-2]  \n- DP‑3: Data in Transit Encryption [DP-3]",
+        "cited": [
+          "DP-2",
+          "DP-3"
+        ],
+        "invalid": []
+      },
+      "cur-out_of_scope-009": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-no_level-006": {
+        "text": "PM‑7 has no profile level assigned in this catalogue release. [PM-7]",
+        "cited": [
+          "PM-7"
+        ],
+        "invalid": []
+      },
+      "cur-out_of_scope-014": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-crosswalk-011": {
+        "text": "The IM8 Reform controls that reference NIST SP 800‑53 AC‑2 are:\n\n- AC‑14: Inventory of Accounts [AC-14]  \n- AC‑4: Access Review [AC-4]",
+        "cited": [
+          "AC-14",
+          "AC-4"
+        ],
+        "invalid": []
+      },
+      "cur-agency_param-001": {
+        "text": "The minimum password length is agency‑defined. [AS-5]",
+        "cited": [
+          "AS-5"
+        ],
+        "invalid": []
+      },
+      "gen-group_list-008": {
+        "text": "The Secure Development group includes the following controls: SD-2: Default Branch Push Permissions and SD-7: CI Environment Variable Secrets Management.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-out_of_scope-004": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-paraphrase-018": {
+        "text": "Yes. The IM8 controls require an inventory of all accounts and their access rights to be established and maintained. This is specified in AC‑14: Inventory of Accounts. [AC-14]",
+        "cited": [
+          "AC-14"
+        ],
+        "invalid": []
+      },
+      "gen-crosswalk_reverse-001": {
+        "text": "AC‑1 references the following external standards and guidelines:  \n- MVSP 4.2: Logical access  \n- IM8 Cloud Security (IaaS and PaaS): 1.4/S7  \n- IM8 Cloud Security (IaaS and PaaS): 1.5/S4e  \n- IM8 Cloud Security (IaaS and PaaS): 1.7/S1b  \n- IM8 Data Protection (Data Security): 1.9  \n- IM8 Data Protection (Data Security): 1.10  \n- IM8 Data Protection (Data Security): 1.12",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-no_level-013": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-out_of_scope-005": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-multi_control-004": {
+        "text": "The controls that prevent secrets from being stored in code repositories or exposed in CI pipelines are:\n\n- **SD‑1: Push Protection for Secrets** – blocks secrets from being pushed to the repository. [SD-1]  \n- **SD‑7: CI Environment Variable Secrets Management** – limits environment‑variable secrets to protected pipelines and masks them in logs. [SD-7]  \n- **AS‑8: Secrets Management** – requires secrets to be stored in a secure secrets‑management solution rather than in source code. [AS-8]",
+        "cited": [
+          "SD-1",
+          "SD-7",
+          "AS-8"
+        ],
+        "invalid": []
+      },
+      "gen-group_list-006": {
+        "text": "The controls in the **Data Protection** group are:\n\n- DP‑5: Sanitisation  \n- DP‑4: Government on Commercial Cloud (GCC)  \n- DP‑2: Data at Rest Encryption  \n- DP‑7: Data Loss Prevention",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-paraphrase-011": {
+        "text": "No. Containers should be configured to run with a non‑root user as the default user in the image build instructions. This is required by CS‑4, which states that a non‑root user must be created and set as the default to reduce the risk of exploitation and compromise of the host system.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-out_of_scope-011": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-out_of_scope-023": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-paraphrase-014": {
+        "text": "To ensure all servers agree on the time, synchronize their internal clocks to a common reference time source. Use a protocol such as Network Time Protocol (NTP) and, in cloud environments, rely on the default time sources provided by the cloud service provider. This practice mitigates security vulnerabilities, data integrity issues, and troubleshooting challenges. [IS-10]",
+        "cited": [
+          "IS-10"
+        ],
+        "invalid": []
+      },
+      "cur-out_of_scope-015": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-exact_id-003": {
+        "text": "AS‑12 requires that file uploads be scanned for malware before they are processed by the system or users. The scan should occur on temporary storage or an ephemerally‑executed compute resource, and unsafe files should be moved to quarantine storage while safe files are forwarded for further processing. [AS-12]",
+        "cited": [
+          "AS-12"
+        ],
+        "invalid": []
+      },
+      "cur-agency_param-002": {
+        "text": "The session must be re‑authenticated after the agency‑defined time period (in hours) specified in the control. [AS-11]",
+        "cited": [
+          "AS-11"
+        ],
+        "invalid": []
+      },
+      "gen-group_list-002": {
+        "text": "The controls in the **Cryptography, Encryption and Key Management** group are:\n\n- CK‑3: Cryptographic Key Management  \n- CK‑1: Cryptographic Key Establishment  \n- CK‑2: Cryptographic Key Rotation",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-crosswalk-003": {
+        "text": "The only IM8 Reform control that explicitly references CIS Critical Security Controls v8 5.1 is **AC‑14: Inventory of Accounts**. [AC‑14]",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-out_of_scope-001": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-applicability-009": {
+        "text": "The applicability level of TP‑3 for low‑risk systems is **Level 1 (should‑have)** [TP-3].",
+        "cited": [
+          "TP-3"
+        ],
+        "invalid": []
+      },
+      "cur-paraphrase-010": {
+        "text": "No. The IM8 controls state that container images should use unique base image tags rather than rolling tags such as `latest` to avoid unintended updates and vulnerabilities. This is covered by Control CS‑1, which explicitly recommends using unique base container image tags and avoiding the `latest` tag. [CS‑1]",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-group_list-009": {
+        "text": "The controls in the Software Supply Chain group are: SC-1, SC-3, SC-2, SC-8, and SC-7.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-paraphrase-022": {
+        "text": "Yes. The IM8 controls require setting up an Intrusion Prevention System (IPS) or Intrusion Detection System (IDS) in the network for low‑risk and medium‑risk systems, which includes monitoring network traffic for malicious activity. [NS-9]",
+        "cited": [
+          "NS-9"
+        ],
+        "invalid": []
+      },
+      "cur-paraphrase-009": {
+        "text": "Segregate production and staging by deploying them in separate cloud tenant accounts or distinct physical environments, ensuring that applications, services, data, secrets, roles, and networks are isolated. Use the same configuration and tooling across environments to simplify debugging while maintaining strict separation. This approach limits exposure, preserves configuration integrity, and supports compliance and auditing. [SD-8]",
+        "cited": [
+          "SD-8"
+        ],
+        "invalid": []
+      },
+      "cur-out_of_scope-002": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-out_of_scope-008": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-multi_control-001": {
+        "text": "The controls that address backing up data and verifying that it can be restored are:\n\n- **BR‑1: Backup** – requires regular backup of all important data and systems and secure storage in a separate location. [BR-1]  \n- **BR‑2: Recovery Testing** – mandates periodic testing of recovery processes to confirm that data and services can be fully restored. [BR-2]",
+        "cited": [
+          "BR-1",
+          "BR-2"
+        ],
+        "invalid": []
+      },
+      "gen-no_level-005": {
+        "text": "LM‑18 has no profile level assigned in this catalogue release. [LM-18]",
+        "cited": [
+          "LM-18"
+        ],
+        "invalid": []
+      },
+      "cur-out_of_scope-019": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-exact_id-009": {
+        "text": "PM‑1 requires agencies to develop, document, and disseminate an agency‑level cybersecurity incident management plan that outlines how to respond to cybersecurity incidents. The plan must be shared with relevant stakeholders and should follow the Government Incident Reporting and Operations Centre (GIROC) ICT and Data Incident Reporting Resources for best‑practice templates. This plan is a “should‑have” for low‑ and medium‑risk systems (Level 1). [PM‑1]",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-paraphrase-021": {
+        "text": "Yes. The IM8 controls require that logs be sanitised to protect classified and sensitive data before they are recorded or shared, ensuring that PII, credentials, API keys, and other sensitive information are not stored in plaintext [LM-19].",
+        "cited": [
+          "LM-19"
+        ],
+        "invalid": []
+      },
+      "gen-no_level-007": {
+        "text": "PM‑8 has no profile level assigned in this catalogue release. [PM-8]",
+        "cited": [
+          "PM-8"
+        ],
+        "invalid": []
+      },
+      "cur-agency_param-004": {
+        "text": "Security logs must be retained for at least an agency‑defined number of days. [LM-8]",
+        "cited": [
+          "LM-8"
+        ],
+        "invalid": []
+      },
+      "gen-applicability-007": {
+        "text": "The applicability level of PM‑5 for medium‑risk systems is **Level 0 (must‑have)**. [PM‑5]",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-crosswalk-013": {
+        "text": "The controls that reference **NIST SP 800‑53 SC‑12** are:\n\n- **CK‑1: Cryptographic Key Establishment** [CK-1]  \n- **CK‑2: Cryptographic Key Rotation** [CK-2]  \n- **CK‑3: Cryptographic Key Management** [CK-3]",
+        "cited": [
+          "CK-1",
+          "CK-2",
+          "CK-3"
+        ],
+        "invalid": []
+      },
+      "gen-no_level-011": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-group_list-007": {
+        "text": "The controls in the Security Programme Management group are: PM‑3, PM‑4, PM‑6, PM‑7, and PM‑8.",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-crosswalk_reverse-003": {
+        "text": "AS‑11 maps to the following references:  \n- NIST SP 800‑53 AC‑12: Session Termination  \n- NIST SP 800‑53 IA‑11: Re‑authentication  \n- NIST SP 800‑63B 4.2.3: Reauthentication  \n- IM8 Cloud ADS: 2.5/S2  \n- IM8 On‑Premise ADS (Non‑S): 2.5/S2",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-group_list-001": {
+        "text": "The controls in the Datacentre group are:\n\n- DC‑2: Physical Access Controls  \n- DC‑1: Separate hosting",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-paraphrase-007": {
+        "text": "Yes. The IM8 controls require a peer review and approval by a designated reviewer before any code is merged into the default branch. This is specified in Control SC‑3. [SC-3]",
+        "cited": [
+          "SC-3"
+        ],
+        "invalid": []
+      },
+      "gen-exact_id-004": {
+        "text": "AS‑5 requires that, where SSO or passwordless is not supported, user‑defined passwords must be at least [agency‑defined: number of characters] characters long and meet [agency‑defined: policy] requirements. [AS‑5]",
+        "cited": [],
+        "invalid": []
+      },
+      "cur-out_of_scope-020": {
+        "text": "The provided IM8 controls do not answer this question.",
+        "cited": [],
+        "invalid": []
+      },
+      "gen-crosswalk-009": {
+        "text": "The IM8 Reform controls that reference **MVSP 4.2** are:\n\n- AC‑1: Principle of Least Privilege [AC‑1]  \n- AC‑2: Multi‑Factor Authentication (MFA) [AC‑2]  \n- AC‑3: Inactive and Expired Accounts [AC‑3]  \n- AC‑4: Access Review [AC‑4]  \n- SD‑8: Deployment Environment Segregation [SD‑8]",
+        "cited": [],
+        "invalid": []
+      }
+    }
+  },
+  "ragas_inputs_n": 15
+}

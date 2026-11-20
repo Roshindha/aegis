@@ -1,7 +1,7 @@
 .venv/
 __pycache__/
 .env
-data/raw/
-data/interim/
+data/
 *.pyc
-data/processed/eval/cache/
+eval/cache/
+.pytest_cache/
