@@ -82,8 +82,9 @@ def compose(final: dict, baseline: dict | None, final_name: str, baseline_name: 
             L.append(f"| {cat} | {x['n']} | {x['n_unverified']} | {_pct(x['correct'])} |")
     rg = final.get("ragas")
     if rg:
-        L += ["", f"### RAGAS (sample of {rg['n']} answers; judge `{rg.get('judge')}`)", "",
-              f"faithfulness {rg['faithfulness']:.3f} · answer relevancy {rg['answer_relevancy']:.3f}"]
+        L += ["", f"### RAGAS ({rg['n']} of {rg.get('n_requested', rg['n'])} sampled answers scored; {rg.get('n_failed', 0)} failed on judge JSON errors or rate limits; judge `{rg.get('judge')}`)", "",
+              f"faithfulness {rg['faithfulness']:.3f} · answer relevancy {rg['answer_relevancy']:.3f}. "
+              "With n this small and a 20B judge these are indicative only; re-run `python -m eval.ragas_eval` to score more."]
     return "\n".join(L)
 
 

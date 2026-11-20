@@ -1534,5 +1534,36 @@
       }
     }
   },
-  "ragas_inputs_n": 15
+  "ragas_inputs_n": 15,
+  "ragas": {
+    "n": 6,
+    "n_requested": 15,
+    "n_failed": 9,
+    "failures": [
+      {
+        "qid": "cur-multi_control-004",
+        "error": "BadRequestError: Error code: 400 - {'error': {'message': \"Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'json_validate_failed'"
+      },
+      {
+        "qid": "cur-multi_control-005",
+        "error": "IncompleteOutputException: "
+      },
+      {
+        "qid": "gen-crosswalk-008",
+        "error": "RuntimeError: rate limited"
+      },
+      {
+        "qid": "gen-crosswalk-003",
+        "error": "RuntimeError: rate limited"
+      },
+      {
+        "qid": "gen-crosswalk-012",
+        "error": "RuntimeError: rate limited"
+      }
+    ],
+    "faithfulness": 0.7222222222222222,
+    "answer_relevancy": 0.8795254210212674,
+    "n_unverified": 15,
+    "judge": "openai/gpt-oss-20b via Groq"
+  }
 }

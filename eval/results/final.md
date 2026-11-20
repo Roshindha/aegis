@@ -75,3 +75,8 @@ Threshold feature: `bm25_top1` (chosen by held-out F1; `threshold_rerank_only` i
 | no_level | 13 | 13 | 76.9% |
 | out_of_scope | 26 | 26 | 100.0% |
 | paraphrase | 22 | 22 | 95.5% |
+
+## RAGAS (sample of 6 answers, judge: openai/gpt-oss-20b via Groq)
+
+- faithfulness: 0.722
+- answer relevancy: 0.880

@@ -175,6 +175,10 @@ Answer correctness by category (guardrail config):
 | no_level | 13 | 13 | 76.9% |
 | out_of_scope | 26 | 26 | 100.0% |
 | paraphrase | 22 | 22 | 95.5% |
+
+### RAGAS (6 of 15 sampled answers scored; 9 failed on judge JSON errors or rate limits; judge `openai/gpt-oss-20b via Groq`)
+
+faithfulness 0.722 · answer relevancy 0.880. With n this small and a 20B judge these are indicative only; re-run `python -m eval.ragas_eval` to score more.
 <!-- RESULTS:END -->
 
 ## Findings
