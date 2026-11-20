@@ -1,6 +1,7 @@
 """Compare retrieval methods:  python -m scripts.search "AS-5" """
 import sys
 
+from aegis.rerank import search
 from aegis.retrieve import bm25_search, hybrid_search, semantic_search
 
 
@@ -18,6 +19,7 @@ def main() -> None:
     show("semantic", semantic_search(query, k=5))
     show("bm25", bm25_search(query, k=5))
     show("hybrid (RRF)", hybrid_search(query, k=5))
+    show("hybrid + rerank (final)", search(query, k=5))
 
 
 if __name__ == "__main__":
