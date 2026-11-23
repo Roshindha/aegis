@@ -35,6 +35,8 @@ def test_resolve_params():
     assert out == "Review every [agency-defined: time period (days)] day(s)."
 
 
+@pytest.mark.skipif(not Path("data/raw/tech-standards/catalogs/im8-reform.json").exists(),
+                    reason="raw GovTech catalogue not cloned (data/ is gitignored)")
 def test_one_chunk_per_control():
     chunks = build_chunks()
     assert len(chunks) == 137
