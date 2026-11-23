@@ -5,5 +5,3 @@ data/
 *.pyc
 eval/cache/
 .pytest_cache/
-CLAUDE.md
-.claude/
