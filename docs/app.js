@@ -107,12 +107,15 @@
     } else if (name === "guardrail") {
       body = guardrailBody(data); summary = data.refuse ? "refused" : "passed";
     } else if (name === "answer") {
-      body = el("p", { class: "answer-text", text: data.text }); summary = (data.cited_ids || []).length + " citations";
+      body = el("p", { class: "answer-text", text: clean(data.text) }); summary = (data.cited_ids || []).length + " citations";
     } else return null;
     const d = el("details", { open: "" }, el("summary", {}, STAGE_TITLES[name] || name, el("span", { class: "muted", text: summary })), el("div", { class: "body" }, body));
     return d;
   }
+  // The model often emits non-breaking hyphens (BR‑4); normalise so IDs and chips match.
+  const clean = (s) => String(s).normalize("NFKC").replace(/[\u2010-\u2015\u2212]/g, "-");
   function answerWithChips(text, hits, host) {
+    text = clean(text);
     const byId = Object.fromEntries(hits.map((h) => [h.control_id, h]));
     const detail = el("div", {});
     const parts = text.split(/(\[[A-Z]{2}-\d+\])/);

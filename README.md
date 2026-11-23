@@ -1,25 +1,15 @@
----
-title: Aegis
-emoji: 🛡️
-colorFrom: blue
-colorTo: indigo
-sdk: docker
-app_port: 7860
-pinned: false
-license: mit
-short_description: Benchmarked RAG over Singapore's IM8 Reform security controls
----
-
 # Aegis: benchmarked retrieval over Singapore compliance controls
 
 Aegis answers questions about the Singapore Government's **IM8 Reform** security controls (137 controls,
 15 groups) with grounded, cited answers, and **measures** how well each stage works on a 124-question benchmark.
-It is a retrieval-augmented generation (RAG) system built to be inspected: every stage between question and
+**[Live demo](https://roshindha.github.io/aegis/)** (placeholder until the API is deployed; the free-tier server takes about a minute to wake up). It is a retrieval-augmented generation (RAG) system built to be inspected: every stage between question and
 answer is visible in the Pipeline Explorer, and every number in this README is produced by a committed script.
 
 > **Honesty notes up front.** The benchmark's 61 curated questions were drafted with LLM assistance from the
 > control text, and **none of the questions has been human-verified yet** (the `verified` flag is `false`
 > throughout). Treat all results as provisional until they are verified. Details under [Limitations](#limitations).
+
+![Pipeline Explorer](docs/screenshots/desktop.png)
 
 ## What it does
 
@@ -28,7 +18,7 @@ answer is visible in the Pipeline Explorer, and every number in this README is p
 - **Grounded generation** (Groq `openai/gpt-oss-20b`, temperature 0) that cites `[CONTROL-ID]`, with citations checked against the retrieved set.
 - **Guardrail that does not trust the LLM**: a regex pre-filter (prompt injection, other frameworks/laws, unknown control IDs) and a calibrated relevance threshold decide to refuse in code, before the model is called.
 - **Crosswalk mode**: "which controls reference MVSP 2.5?" and "which NIST references does AS-12 map to?" are answered from an inverted index over the structured references, because that data is not in the searchable text.
-- **Pipeline Explorer**: a web page (FastAPI + Server-Sent Events) that shows pre-filter → semantic & BM25 ranks → RRF fusion → rerank scores → guardrail decision → cited answer.
+- **Pipeline Explorer**: a static web page (GitHub Pages, calling a FastAPI + Server-Sent Events API) that shows pre-filter → semantic & BM25 ranks → RRF fusion → rerank scores → guardrail decision → cited answer.
 
 ## Architecture
 
@@ -56,15 +46,27 @@ flowchart LR
   C --> BM
 ```
 
+### Deployment architecture (free tier)
+
+```mermaid
+flowchart LR
+  U[Browser] --> GP[GitHub Pages<br/>static docs/]
+  GP -- fetch + SSE, CORS-restricted --> API[Render free web service<br/>FastAPI, ONNX models, in-memory cache + rate limit]
+  API --> DB[(Supabase Postgres<br/>pgvector)]
+  API -. DB unreachable: fall back to .-> SNAP[corpus snapshot +<br/>precomputed embeddings]
+  API --> G[Groq API<br/>gpt-oss-20b]
+  KA[GitHub Actions cron<br/>every 14 min] -- GET /health --> API
+```
+
 ## Quickstart
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
-pip install -r requirements-dev.txt -c constraints.txt
+pip install -r requirements-dev.txt -c constraints.txt   # serving + tests; no torch
 cp .env.example .env          # add GROQ_API_KEY for answer generation
 python -m pytest -q           # offline: fakes only
 python -m scripts.ask "How often should backups be tested?"
-uvicorn app.main:app          # Pipeline Explorer at http://localhost:8000
+uvicorn app.main:app          # API + the same Pipeline Explorer page at http://localhost:8000
 ```
 
 The default retrieval backend is **local** (reads `corpus/chunks.jsonl`, vectors in memory), so no database is
@@ -73,6 +75,10 @@ needed. To use Supabase + pgvector instead: run `db/schema.sql`, set `DATABASE_U
 
 Rebuild the corpus from the source repo (`git clone https://github.com/GovTechSG/tech-standards data/raw/tech-standards`):
 `python -m scripts.build_chunks`.
+
+Torch is only needed offline (`pip install -r requirements-eval.txt -c constraints-eval.txt`) for
+`python -m scripts.build_embeddings` (regenerates `corpus/embeddings.npz`), `python -m scripts.equivalence`
+(torch vs ONNX check) and RAGAS scoring. The server and the retrieval eval use ONNX only.
 
 ### Reproduce the evaluation
 
@@ -180,6 +186,16 @@ Answer correctness by category (guardrail config):
 
 faithfulness 0.722 · answer relevancy 0.880. With n this small and a 20B judge these are indicative only; re-run `python -m eval.ragas_eval` to score more.
 <!-- RESULTS:END -->
+
+## Free-tier deployment
+
+- **Frontend**: `docs/` is plain HTML/CSS/JS with no build step, deployed to GitHub Pages by `.github/workflows/pages.yml`. The API URL is one line in `docs/config.js`.
+- **API**: one free Render web service from `render.yaml` (Docker). Secrets (`GROQ_API_KEY`, `DATABASE_URL`, `GROQ_MODEL`, `ALLOWED_ORIGINS`) are set in the Render dashboard, never in the repo.
+- **Cold starts**: Render's free tier sleeps after about 15 idle minutes and takes about a minute to wake. The page shows "Waking up the server" and retries `/health`. `.github/workflows/keepalive.yml` pings `/health` every 14 minutes (repository variable `RENDER_URL`); GitHub disables scheduled workflows after 60 days without repository activity, so push a commit now and then. The ping also runs one cheap query that keeps the Supabase project active.
+- **Rate limits**: 10 questions per minute and 50 per day per IP, answered with a friendly JSON error; answers are cached in memory by normalised question. These reset when the server restarts.
+- **Quota**: if the Groq key is missing or returns HTTP 429, the page says the demo quota is reached, while retrieval stages and the retrieved controls still show.
+- **Resilience**: if Supabase is unreachable the API serves from the committed corpus snapshot and precomputed embeddings; `/health` reports the active backend.
+- **Memory**: serving uses ONNX models (no torch). Measured in the container with a 512 MB limit: server process 334 MB RSS after start-up and 412 MB after five queries (see `NOTES.md`). The ONNX models give identical top-5 rankings to the torch models on all 124 benchmark questions (`eval/results/onnx-equivalence.json`).
 
 ## Findings
 

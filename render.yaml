@@ -1,0 +1,20 @@
+# Render Blueprint: one free Docker web service. Secrets are entered in the Render dashboard (sync: false).
+services:
+  - type: web
+    name: aegis-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: AEGIS_BACKEND
+        value: db
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false

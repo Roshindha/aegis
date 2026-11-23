@@ -16,7 +16,7 @@ from aegis.embed import embed_documents, embed_query
 
 # Two interchangeable backends hold the same data and use the same embedding model:
 #   "local" (default): read corpus/chunks.jsonl, keep vectors in memory. No database needed,
-#                      so tests, CI, Docker and Hugging Face Spaces all work offline.
+#                      so tests, CI, Docker and free hosting all work offline.
 #   "db":              Supabase Postgres + pgvector (set AEGIS_BACKEND=db and DATABASE_URL).
 def requested_backend() -> str:
     return os.environ.get("AEGIS_BACKEND", "local").lower()
