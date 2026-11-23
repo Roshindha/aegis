@@ -18,7 +18,7 @@ jobs:
             constraints.txt
       - name: Install (pinned, no torch)
         run: pip install -r requirements-dev.txt -c constraints.txt
-      - name: Unit tests (offline: fakes only, no network/DB/model downloads)
+      - name: "Unit tests (offline, fakes only: no network, DB or model downloads)"
         run: python -m pytest -q
       - name: Benchmark is valid
         run: python -m eval.validate
