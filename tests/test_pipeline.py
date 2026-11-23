@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 import pytest
 
 import aegis.guardrail as gr
@@ -76,3 +78,17 @@ def test_stages_in_order(stubs, monkeypatch):
 def test_retrieve_rejects_unknown_method():
     with pytest.raises(ValueError):
         pl.retrieve("magic", "q")
+
+
+def test_stage_events_show_more_hits_than_the_context_uses(monkeypatch):
+    many = [Hit(f"C-{i}", f"AS-{i}", "T", "G", f"AS-{i}: T", 1.0 - i / 100, semantic_rank=i) for i in range(1, 21)]
+    monkeypatch.setattr(pl, "semantic_search", lambda q, k: many[:k])
+    monkeypatch.setattr(pl, "bm25_search", lambda q, k: many[:k])
+    monkeypatch.setattr(pl, "rerank", lambda q, hits, k=5: [replace(h, score=20.0 - i) for i, h in enumerate(hits[:k])])
+    monkeypatch.setattr(gr, "load_calibration", lambda: ("rerank_top1", -99.0))
+    monkeypatch.setattr(gr, "known_ids", lambda: frozenset())
+    monkeypatch.setattr(gr, "_group_titles", lambda: ())
+    ev = {e["stage"]: e for e in pl.run_stages("how do we rotate keys", k=5, generate=False)}
+    for stage in ("semantic", "bm25", "fusion", "rerank"):
+        assert len(ev[stage]["data"]["hits"]) == 8
+    assert len(ev["result"]["data"]["hits"]) == 5            # the answer context is unchanged

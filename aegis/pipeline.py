@@ -16,6 +16,7 @@ from aegis.rerank import rerank
 from aegis.retrieve import Hit, bm25_search, hybrid_search, rrf_fuse, semantic_search
 
 CANDIDATES = 20
+SHOW = 8          # stage events carry up to this many hits (the explorer's rank-movement view); context size is still k
 METHODS = ("semantic", "bm25", "hybrid", "hybrid_rerank")
 
 
@@ -81,15 +82,17 @@ def run_stages(question: str, *, k: int = 5, use_guardrail: bool = True, generat
 
     sem = semantic_search(question, CANDIDATES)
     bm = bm25_search(question, CANDIDATES)
-    yield {"stage": "semantic", "data": {"hits": [hit_dict(h) for h in sem[:k]]}}
-    yield {"stage": "bm25", "data": {"hits": [hit_dict(h) for h in bm[:k]]}}
+    show = max(k, SHOW)
+    yield {"stage": "semantic", "data": {"hits": [hit_dict(h) for h in sem[:show]]}}
+    yield {"stage": "bm25", "data": {"hits": [hit_dict(h) for h in bm[:show]]}}
     fused = rrf_fuse([sem, bm], k=CANDIDATES)
-    yield {"stage": "fusion", "data": {"hits": [hit_dict(h) for h in fused[:k]]}}
-    base = rerank(question, fused, k=k)
+    yield {"stage": "fusion", "data": {"hits": [hit_dict(h) for h in fused[:show]]}}
+    reranked = rerank(question, fused, k=show)      # same scores and order; base is the first k of them
+    base = reranked[:k]
     top = base[0].score if base else None
     feature, _ = guardrail.load_calibration()
     signal = guardrail.feature_value(feature, base, bm)
-    yield {"stage": "rerank", "data": {"hits": [hit_dict(h) for h in base]}}
+    yield {"stage": "rerank", "data": {"hits": [hit_dict(h) for h in reranked]}}
     ranked = crosswalk.merge(cw, base, limit=CANDIDATES)
     ranked = ranked[:crosswalk.context_size(ranked, k)]
 

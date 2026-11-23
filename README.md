@@ -9,7 +9,7 @@ answer is visible in the Pipeline Explorer, and every number in this README is p
 > control text, and **none of the questions has been human-verified yet** (the `verified` flag is `false`
 > throughout). Treat all results as provisional until they are verified. Details under [Limitations](#limitations).
 
-![Pipeline Explorer](docs/screenshots/desktop.png)
+![Pipeline Explorer after a question: the signal line, rank movement and a cited answer](docs/screenshots/desktop-light-answer.png)
 
 ## What it does
 

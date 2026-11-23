@@ -5,77 +5,108 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Aegis Pipeline Explorer</title>
 <meta name="description" content="Benchmarked retrieval over Singapore IM8 Reform compliance controls: watch every pipeline stage.">
+<meta name="color-scheme" content="light dark">
+<link rel="preload" href="fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/hanken-grotesk.woff2" as="font" type="font/woff2" crossorigin>
+<script>
+  /* Set the theme before first paint: saved choice, else the system preference. */
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("aegis-theme"); } catch (e) {}
+    if (t !== "light" && t !== "dark") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="wrap">
-  <h1>Aegis <span class="muted">Pipeline Explorer</span></h1>
-  <p class="lede">Ask a question about the Singapore Government's IM8 Reform security controls and watch each retrieval stage run: pre-filter, semantic and BM25 search, fusion, cross-encoder rerank, guardrail, then a cited answer.</p>
-  <div id="status" class="status" role="status" aria-live="polite"></div>
+<a class="skip" href="#q">Skip to the question box</a>
+
+<header class="masthead wrap">
+  <a class="wordmark" href="./">Aegis</a>
+  <p class="tagline">Benchmarked retrieval over Singapore's IM8&nbsp;Reform controls</p>
+  <nav aria-label="Site">
+    <a href="https://github.com/Roshindha/aegis">GitHub</a>
+    <button id="theme" type="button" aria-pressed="false">Dark</button>
+  </nav>
 </header>
 
-<main class="wrap">
-  <section aria-labelledby="ask-h">
-    <h2 id="ask-h" class="sr">Ask a question</h2>
+<main>
+  <section class="ask wrap" aria-labelledby="ask-h">
+    <p class="kicker">Pipeline Explorer</p>
+    <h1 id="ask-h">Ask the <em>controls</em>.</h1>
+    <p class="lede">Put a question to the Singapore Government's IM8 Reform security controls and watch each stage of the retrieval run: pre-filter, two kinds of search, fusion, rerank, a guardrail that decides in code, then a cited answer.</p>
     <form id="form" autocomplete="off">
-      <label for="q" class="sr">Question</label>
-      <input id="q" name="q" type="text" maxlength="500" placeholder="e.g. What does AS-5 require?" required minlength="3">
-      <button id="go" type="submit">Ask</button>
+      <label for="q">Your question</label>
+      <div class="field">
+        <input id="q" name="q" type="text" maxlength="500" minlength="3" required placeholder="What does AS-5 require?">
+        <button id="go" type="submit">Ask</button>
+      </div>
     </form>
-    <div class="examples" id="examples" aria-label="Example questions"></div>
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <h2 class="label">Try one</h2>
+    <ul class="examples" id="examples"></ul>
   </section>
 
-  <section id="answer-card" class="card" hidden aria-live="polite"></section>
-  <section id="pipeline" hidden aria-label="Pipeline stages"><h2>Pipeline</h2><div id="stages"></div></section>
+  <section id="run" class="wide" hidden aria-label="Pipeline">
+    <div class="wrap">
+      <h2 class="label">Pipeline</h2>
+      <ol class="line" id="line"></ol>
+    </div>
+  </section>
 
-  <section id="how" class="card">
-    <h2>How it works</h2>
+  <section id="how" class="wrap prose" aria-labelledby="how-h">
+    <h2 id="how-h">How it works</h2>
     <ol class="steps">
-      <li><b>Pre-filter</b>: regex rules refuse prompt injection, other frameworks or laws, and unknown control IDs. No model involved.</li>
-      <li><b>Semantic + BM25</b>: bge-small embeddings and keyword search each rank the 137 controls.</li>
-      <li><b>Fusion</b>: reciprocal rank fusion (k=60) merges the two lists.</li>
-      <li><b>Rerank</b>: a cross-encoder re-reads the top 20 (raw scores).</li>
-      <li><b>Guardrail</b>: a threshold calibrated by cross-validation decides to refuse <em>in code</em> before any LLM call.</li>
-      <li><b>Answer</b>: an LLM answers only from the retrieved controls and cites <code>[CONTROL-ID]</code>s.</li>
+      <li><span class="tag" style="--stage: var(--c-prefilter)">Pre-filter</span> Regex rules refuse prompt injection, other frameworks or laws, and unknown control IDs. No model is involved.</li>
+      <li><span class="tag" style="--stage: var(--c-semantic)">Semantic</span> Embeddings (bge-small) rank all 137 controls by meaning.</li>
+      <li><span class="tag" style="--stage: var(--c-bm25)">BM25</span> Keyword search ranks the same controls by shared words and IDs.</li>
+      <li><span class="tag" style="--stage: var(--c-fusion)">Fusion</span> Reciprocal rank fusion (k&nbsp;=&nbsp;60) merges the two lists.</li>
+      <li><span class="tag" style="--stage: var(--c-rerank)">Rerank</span> A cross-encoder re-reads the top 20 candidates against the question and scores each one.</li>
+      <li><span class="tag" style="--stage: var(--c-guardrail)">Guardrail</span> A threshold calibrated by cross-validation decides whether to refuse, in code, before any language model is called.</li>
+      <li><span class="tag" style="--stage: var(--c-answer)">Answer</span> A model answers only from the retrieved controls and cites them as <code>[CONTROL-ID]</code>.</li>
     </ol>
-    <p class="muted">Crosswalk questions ("which controls reference NIST SP 800-53 IA-5?") use a structured reference index, because the control text does not contain its references.</p>
+    <p>Crosswalk questions, such as "which controls reference NIST SP 800-53 IA-5?", use a structured reference index, because the control text does not contain its references.</p>
   </section>
 
-  <section id="results" class="card">
-    <h2>Results</h2>
-    <p class="warn"><b>Read this first.</b> All 124 benchmark questions are <b>unverified</b>: 63 were generated from catalogue data, and 61 were drafted with LLM assistance; gold labels are pending manual verification. The crosswalk gold labels come from the same data as the crosswalk index, so those results measure routing, not independent truth. Source: committed run <code>eval/results/final.json</code>; 98 answerable questions.</p>
-    <div class="scroll"><table>
-      <caption>Retrieval (answerable questions)</caption>
-      <thead><tr><th>method</th><th>MRR</th><th>set-recall@5</th><th>hit@5</th></tr></thead>
+  <section id="results" class="wrap prose" aria-labelledby="res-h">
+    <h2 id="res-h">Results</h2>
+    <p class="note"><b>Read this first.</b> Every benchmark label is pending manual verification: 63 of the 124 questions were generated from catalogue data and 61 were drafted with LLM assistance. The crosswalk gold labels come from the same references the crosswalk index is built from, so those scores show that routing works, not that the references are right. Source: the committed run <code>eval/results/final.json</code>, 98 answerable questions.</p>
+
+    <div class="tablewrap"><table>
+      <caption>Retrieval, answerable questions</caption>
+      <thead><tr><th scope="col">Method</th><th scope="col" class="num">MRR</th><th scope="col" class="num">Set-recall@5</th><th scope="col" class="num">Hit@5</th></tr></thead>
       <tbody>
-        <tr><td>semantic</td><td>0.577</td><td>0.638</td><td>0.704</td></tr>
-        <tr><td>BM25</td><td>0.761</td><td>0.784</td><td>0.847</td></tr>
-        <tr><td>hybrid (RRF)</td><td>0.735</td><td>0.768</td><td>0.827</td></tr>
-        <tr><td>hybrid + rerank</td><td>0.770</td><td>0.805</td><td>0.847</td></tr>
-        <tr><td>hybrid + rerank + crosswalk</td><td>0.937</td><td>0.951</td><td>0.990</td></tr>
+        <tr><th scope="row">Semantic</th><td class="num">0.577</td><td class="num">0.638</td><td class="num">0.704</td></tr>
+        <tr><th scope="row">BM25</th><td class="num">0.761</td><td class="num">0.784</td><td class="num">0.847</td></tr>
+        <tr><th scope="row">Hybrid (RRF)</th><td class="num">0.735</td><td class="num">0.768</td><td class="num">0.827</td></tr>
+        <tr><th scope="row">Hybrid + rerank</th><td class="num">0.770</td><td class="num">0.805</td><td class="num">0.847</td></tr>
+        <tr><th scope="row">Hybrid + rerank + crosswalk</th><td class="num">0.937</td><td class="num">0.951</td><td class="num">0.990</td></tr>
       </tbody>
     </table></div>
-    <div class="scroll"><table>
+
+    <div class="tablewrap"><table>
       <caption>End to end (Groq <code>openai/gpt-oss-20b</code>)</caption>
-      <thead><tr><th>measure</th><th>value</th></tr></thead>
+      <thead><tr><th scope="col">Measure</th><th scope="col" class="num">Value</th></tr></thead>
       <tbody>
-        <tr><td>Answer correct, baseline (hybrid + rerank)</td><td>67.3%</td></tr>
-        <tr><td>Answer correct, with crosswalk mode</td><td>87.8%</td></tr>
-        <tr><td>Guardrail held-out abstention F1 (pre-filter part is in-sample)</td><td>0.962</td></tr>
-        <tr><td>False refusals on answerable questions (guardrail on)</td><td>4.1%</td></tr>
-        <tr><td>Cited IDs that were in the retrieved set</td><td>100%</td></tr>
-        <tr><td>Answers that contain a citation at all</td><td>68.1%</td></tr>
-        <tr><td>RAGAS faithfulness / answer relevancy (6 of 15 sampled answers scored)</td><td>0.722 / 0.880</td></tr>
+        <tr><th scope="row">Answer correct, baseline (hybrid + rerank)</th><td class="num">67.3%</td></tr>
+        <tr><th scope="row">Answer correct, with crosswalk mode</th><td class="num">87.8%</td></tr>
+        <tr><th scope="row">Guardrail held-out abstention F1 (the pre-filter part is in-sample)</th><td class="num">0.962</td></tr>
+        <tr><th scope="row">False refusals on answerable questions (guardrail on)</th><td class="num">4.1%</td></tr>
+        <tr><th scope="row">Cited IDs that were in the retrieved set</th><td class="num">100%</td></tr>
+        <tr><th scope="row">Answers that contain a citation at all</th><td class="num">68.1%</td></tr>
+        <tr><th scope="row">RAGAS faithfulness / answer relevancy (6 of 15 sampled answers scored)</th><td class="num">0.722 / 0.880</td></tr>
       </tbody>
     </table></div>
-    <p class="muted">Weak spots: group listings are correct only 30% of the time (the context holds 5 controls; groups have up to 11). Full tables, findings and limitations are in the <a href="https://github.com/Roshindha/aegis#results">README</a>. Not legal or compliance advice.</p>
+
+    <p class="small">Weak spots: group listings are correct only 30% of the time, because the context holds five controls and a group has up to eleven. Full tables, findings and limitations are in the <a href="https://github.com/Roshindha/aegis#results">README</a>. This is not legal or compliance advice.</p>
   </section>
 </main>
 
-<footer class="wrap muted">
-  Controls from the <a href="https://github.com/GovTechSG/tech-standards">GovTech Singapore IM8 Reform OSCAL catalogue</a> (MIT licence), snapshot 2025.05.13.
-  Aegis is independent and not affiliated with GovTech. · <a href="https://github.com/Roshindha/aegis">Source on GitHub</a>
+<footer class="wrap">
+  <p>Controls from the <a href="https://github.com/GovTechSG/tech-standards">GovTech Singapore IM8 Reform OSCAL catalogue</a> (MIT licence), snapshot 2025.05.13. Aegis is independent and not affiliated with GovTech. <a href="https://github.com/Roshindha/aegis">Source on GitHub</a>.</p>
 </footer>
+
 <script src="config.js"></script>
 <script src="app.js"></script>
 </body>

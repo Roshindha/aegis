@@ -31,3 +31,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+## Fonts (docs/fonts/)
+
+Instrument Serif, Hanken Grotesk and JetBrains Mono are distributed under the SIL Open Font License 1.1
+(https://openfontlicense.org), obtained from Google Fonts (https://fonts.google.com) and subset to Latin.
