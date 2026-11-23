@@ -23,3 +23,15 @@ Format: decision. Reason.
 - RAGAS ran in a separate venv (its dependency tree is large) on a 15-answer sample against the Groq judge: only 6 scored, 9 failed (judge JSON validation errors, rate limits). Reported as such; not retried to avoid inflating the daily Groq budget.
 - Fixed a broken .gitignore line (an append without newline merged `data/processed/` with `eval/cache/`); `data/` is now ignored whole.
 - Docker image and GitHub Actions were not executed here (Docker daemon not running; no remote). CI gate floors were checked locally with `python -m eval.gate`.
+
+## Deployment pass (free-tier hosting)
+- Serving uses ONNX via fastembed (BAAI/bge-small-en-v1.5; Xenova/ms-marco-MiniLM-L-6-v2 = ONNX export of the same cross-encoder), torch only in requirements-eval.txt. Reason: 512 MB RAM target; torch alone is >300 MB.
+- Equivalence check (`python -m scripts.equivalence`, committed as eval/results/onnx-equivalence.json), all 124 benchmark questions: query-embedding cosine min 0.999998, max |rerank score diff| 8.6e-6 over the 20 candidates, top-5 ranking identical on 124/124 (top-1 124/124). Rankings are identical, so the README numbers and CI floors were NOT regenerated; the retrieval-only gate on the ONNX path gives the same values (MRR 0.7698 / 0.9372).
+- Document vectors are precomputed with torch into corpus/embeddings.npz (192 KB, guarded by a content digest + test) instead of embedding 137 chunks at start-up; fallback to ONNX embedding if the file is stale.
+- ORT memory: fastembed forces graph optimisation ON, which keeps a second copy of the weights (~110 MB for bge-small). `aegis.embed.low_memory_onnx` turns it off, plus 1 thread, no CPU arena, rerank batch size 4. Measured in the container (python:3.12-slim, `--memory 512m`, db backend): uvicorn RSS 334 MB after start-up, 412 MB after 5 queries (peak 414 MB).
+- DB resilience: `backend()` returns the active backend; a failed Supabase call (connect timeout 5 s) marks the DB down for 60 s and the snapshot is used; BM25 always indexes the snapshot. /health pings the DB (keeps Supabase active) and reports the active backend.
+- Rate limiting is per client IP using the rightmost X-Forwarded-For entry (the one Render's proxy appends; the leftmost is client-controlled). In-memory, single process: limits reset on restart.
+- Answer cache stores only error-free runs; Groq 429 or missing key become a "demo quota reached" error event while retrieval stages and the result still stream.
+- Explorer moved from app/static to docs/ (GitHub Pages); FastAPI serves the same files at / for local use. The API base URL is the single line in docs/config.js.
+- constraints.txt is now the closure of the serving+dev requirements (no torch); constraints-eval.txt is the full eval environment.
+- The README's run header still shows commit `02729f5+dirty`: that was the working-tree commit when the run was made; history was later rewritten, so the hash no longer exists. The run itself is unchanged.

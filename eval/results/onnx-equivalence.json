@@ -1,9 +1,9 @@
 {
   "questions": 124,
-  "embedding_cosine_min": 0.9999980926513672,
-  "embedding_cosine_mean": 0.9999989521118903,
-  "rerank_abs_diff_max": 1.430511474609375e-05,
-  "rerank_abs_diff_mean": 5.079853919244581e-06,
+  "embedding_cosine_min": 0.9999978542327881,
+  "embedding_cosine_mean": 0.9999989285584419,
+  "rerank_abs_diff_max": 8.58306884765625e-06,
+  "rerank_abs_diff_mean": 4.401130060995779e-06,
   "top5_identical": 124,
   "top1_identical": 124,
   "top5_differs_on": []

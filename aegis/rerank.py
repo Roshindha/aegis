@@ -15,11 +15,12 @@ class OnnxReranker:
 
     def __init__(self) -> None:
         from fastembed.rerank.cross_encoder import TextCrossEncoder
-        from aegis.embed import model_dir
-        self._model = TextCrossEncoder(ONNX_RERANK_MODEL, cache_dir=model_dir())
+        from aegis.embed import low_memory_onnx, model_dir
+        with low_memory_onnx():
+            self._model = TextCrossEncoder(ONNX_RERANK_MODEL, cache_dir=model_dir(), threads=1, enable_cpu_mem_arena=False)
 
     def score(self, query: str, docs: list[str]) -> list[float]:
-        return [float(s) for s in self._model.rerank(query, docs)]   # raw logits, same order as docs
+        return [float(s) for s in self._model.rerank(query, docs, batch_size=4)]   # raw logits, same order as docs
 
 
 @lru_cache(maxsize=1)

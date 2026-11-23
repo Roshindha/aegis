@@ -16,10 +16,8 @@ jobs:
           cache-dependency-path: |
             requirements*.txt
             constraints.txt
-      - name: Install (CPU torch, pinned)
-        run: |
-          pip install torch --index-url https://download.pytorch.org/whl/cpu -c constraints.txt
-          pip install -r requirements-dev.txt -c constraints.txt
+      - name: Install (pinned, no torch)
+        run: pip install -r requirements-dev.txt -c constraints.txt
       - name: Unit tests (offline: fakes only, no network/DB/model downloads)
         run: python -m pytest -q
       - name: Benchmark is valid
@@ -37,16 +35,14 @@ jobs:
           cache-dependency-path: |
             requirements*.txt
             constraints.txt
-      - name: Install (CPU torch, pinned)
-        run: |
-          pip install torch --index-url https://download.pytorch.org/whl/cpu -c constraints.txt
-          pip install -r requirements-dev.txt -c constraints.txt
+      - name: Install (pinned, no torch)
+        run: pip install -r requirements-dev.txt -c constraints.txt
       - name: Cache model weights
         uses: actions/cache@v4
         with:
-          path: ~/.cache/huggingface
-          key: hf-models-bge-small-ms-marco-v1
-      - name: Download models
+          path: ~/.cache/aegis-models
+          key: onnx-models-bge-small-ms-marco-v1
+      - name: Download ONNX models
         run: python -m scripts.download_models
       - name: Retrieval-only eval (no API key needed)
         run: python -m eval.run_eval --retrieval-only --out eval/results/ci

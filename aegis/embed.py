@@ -4,6 +4,7 @@ The torch reference implementation lives in aegis/torch_ref.py (offline use only
 from __future__ import annotations
 
 import os
+from contextlib import contextmanager
 from functools import lru_cache
 
 import numpy as np
@@ -20,10 +21,42 @@ def model_dir() -> str:
     return os.environ.get("AEGIS_MODEL_DIR", os.path.expanduser("~/.cache/aegis-models"))
 
 
+@contextmanager
+def low_memory_onnx():
+    """Build ONNX sessions without graph optimisation: ORT's optimiser keeps a second copy of the
+    weights (~110 MB for bge-small), which matters on a 512 MB host. Outputs are unchanged to ~1e-5
+    (checked by scripts/equivalence.py)."""
+    import onnxruntime as ort
+    original = ort.SessionOptions
+
+    off = ort.GraphOptimizationLevel.ORT_DISABLE_ALL
+    level = original.graph_optimization_level
+
+    class LowMemoryOptions(original):
+        def __init__(self) -> None:
+            super().__init__()
+            level.__set__(self, off)
+            self.enable_mem_pattern = False
+
+        @property
+        def graph_optimization_level(self):
+            return level.__get__(self)
+
+        @graph_optimization_level.setter
+        def graph_optimization_level(self, _ignored) -> None:      # fastembed sets ENABLE_ALL: keep it off
+            level.__set__(self, off)
+    ort.SessionOptions = LowMemoryOptions
+    try:
+        yield
+    finally:
+        ort.SessionOptions = original
+
+
 @lru_cache(maxsize=1)
 def get_model():
     from fastembed import TextEmbedding
-    return TextEmbedding(MODEL_NAME, cache_dir=model_dir())
+    with low_memory_onnx():
+        return TextEmbedding(MODEL_NAME, cache_dir=model_dir(), threads=1, enable_cpu_mem_arena=False)
 
 
 def _unit(vectors: np.ndarray) -> np.ndarray:
