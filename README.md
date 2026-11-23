@@ -2,7 +2,7 @@
 
 Aegis answers questions about the Singapore Government's **IM8 Reform** security controls (137 controls,
 15 groups) with grounded, cited answers, and **measures** how well each stage works on a 124-question benchmark.
-**[Live demo](https://roshindha.github.io/aegis/)** (placeholder until the API is deployed; the free-tier server takes about a minute to wake up). It is a retrieval-augmented generation (RAG) system built to be inspected: every stage between question and
+**[Live demo](https://roshindha.github.io/aegis/)** (GitHub Pages front end; it needs the Render API from `render.yaml` to be running, and the free-tier server takes about a minute to wake up). It is a retrieval-augmented generation (RAG) system built to be inspected: every stage between question and
 answer is visible in the Pipeline Explorer, and every number in this README is produced by a committed script.
 
 > **Honesty notes up front.** The benchmark's 61 curated questions were drafted with LLM assistance from the
