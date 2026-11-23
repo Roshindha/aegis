@@ -10,7 +10,7 @@ from functools import lru_cache
 import numpy as np
 from rank_bm25 import BM25Okapi
 
-from aegis.corpus import load_chunks
+from aegis.corpus import load_chunks, load_embeddings
 from aegis.embed import embed_documents, embed_query
 
 # Two interchangeable backends hold the same data and use the same embedding model:
@@ -61,7 +61,10 @@ def _local_rows() -> list[tuple]:
 @lru_cache(maxsize=1)
 def _local_index() -> tuple[list[tuple], np.ndarray]:
     rows = _local_rows()
-    return rows, embed_documents([r[4] for r in rows], show_progress=False)   # unit-length vectors
+    vectors = load_embeddings(rows)                 # committed corpus/embeddings.npz (torch-built)
+    if vectors is None:                             # stale/missing file: embed with the ONNX model
+        vectors = embed_documents([r[4] for r in rows], show_progress=False)
+    return rows, vectors                            # unit-length vectors
 
 
 def semantic_search(query: str, k: int = 5) -> list[Hit]:

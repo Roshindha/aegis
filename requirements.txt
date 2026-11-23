@@ -1,6 +1,6 @@
 # Direct runtime dependencies. Exact resolved versions live in constraints.txt.
 python-dotenv
-sentence-transformers
+fastembed
 numpy
 rank-bm25
 groq

@@ -13,6 +13,7 @@ def test_local_semantic_search_ranks_by_cosine(monkeypatch):
     rv._local_index.cache_clear()
     monkeypatch.setattr(rv, "backend", lambda: "local")
     monkeypatch.setattr(rv, "load_chunks", lambda: CHUNKS)
+    monkeypatch.setattr(rv, "load_embeddings", lambda rows: None)   # force the embed-at-start-up fallback
     monkeypatch.setattr(rv, "embed_documents", lambda texts, show_progress=True: np.array([VECS[t.split(":")[0]] for t in texts]))
     monkeypatch.setattr(rv, "embed_query", lambda q: np.array([0.9, 0.1]))
     hits = rv.semantic_search("anything", k=2)
@@ -36,3 +37,17 @@ def test_rrf_does_not_mutate_input_hits():
     a = rv.Hit("A", "A", "t", "g", "c", 0.5, semantic_rank=1)
     rv.rrf_fuse([[a]], k=1)
     assert a.score == 0.5
+
+
+def test_local_index_uses_precomputed_vectors_when_they_match(monkeypatch):
+    rv._local_index.cache_clear()
+    monkeypatch.setattr(rv, "backend", lambda: "local")
+    monkeypatch.setattr(rv, "load_chunks", lambda: CHUNKS)
+    monkeypatch.setattr(rv, "load_embeddings", lambda rows: np.array([[0.0, 1.0], [1.0, 0.0]], dtype="float32"))  # sorted: AS-5, BR-2
+
+    def boom(*a, **k):
+        raise AssertionError("must not embed documents when precomputed vectors match")
+    monkeypatch.setattr(rv, "embed_documents", boom)
+    monkeypatch.setattr(rv, "embed_query", lambda q: np.array([0.1, 0.9]))
+    assert rv.semantic_search("x", k=1)[0].control_id == "AS-5"
+    rv._local_index.cache_clear()

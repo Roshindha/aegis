@@ -5,7 +5,8 @@ from pathlib import Path
 from psycopg.types.json import Jsonb
 
 from aegis.db import connect
-from aegis.embed import EMBEDDING_DIM, embed_documents
+from aegis.embed import EMBEDDING_DIM
+from aegis.torch_ref import embed_documents   # torch: offline loading only
 
 CHUNKS = Path("data/processed/chunks.jsonl")
 

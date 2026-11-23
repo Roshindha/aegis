@@ -4,17 +4,27 @@ from __future__ import annotations
 from dataclasses import replace
 from functools import lru_cache
 
-import torch
-from sentence_transformers import CrossEncoder
-
 from aegis.retrieve import Hit, hybrid_search
 
 RERANK_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+ONNX_RERANK_MODEL = "Xenova/ms-marco-MiniLM-L-6-v2"   # ONNX export of the same cross-encoder
+
+
+class OnnxReranker:
+    """fastembed (ONNX) cross-encoder: no torch at serving time."""
+
+    def __init__(self) -> None:
+        from fastembed.rerank.cross_encoder import TextCrossEncoder
+        from aegis.embed import model_dir
+        self._model = TextCrossEncoder(ONNX_RERANK_MODEL, cache_dir=model_dir())
+
+    def score(self, query: str, docs: list[str]) -> list[float]:
+        return [float(s) for s in self._model.rerank(query, docs)]   # raw logits, same order as docs
 
 
 @lru_cache(maxsize=1)
-def get_reranker() -> CrossEncoder:
-    return CrossEncoder(RERANK_MODEL)
+def get_reranker() -> OnnxReranker:
+    return OnnxReranker()
 
 
 def rerank(query: str, hits: list[Hit], k: int = 5) -> list[Hit]:
@@ -25,8 +35,7 @@ def rerank(query: str, hits: list[Hit], k: int = 5) -> list[Hit]:
     """
     if not hits:
         return []
-    pairs = [(query, h.content) for h in hits]
-    scores = get_reranker().predict(pairs, activation_fn=torch.nn.Identity())  # raw logits
+    scores = get_reranker().score(query, [h.content for h in hits])  # raw logits
     scored = [replace(h, score=float(s)) for h, s in zip(hits, scores)]
     return sorted(scored, key=lambda h: h.score, reverse=True)[:k]
 

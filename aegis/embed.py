@@ -1,10 +1,12 @@
-"""Turn text into vectors with a small, CPU-friendly embedding model."""
+"""Runtime embeddings: ONNX (fastembed) version of BAAI/bge-small-en-v1.5. No torch needed.
+
+The torch reference implementation lives in aegis/torch_ref.py (offline use only)."""
 from __future__ import annotations
 
+import os
 from functools import lru_cache
 
 import numpy as np
-from sentence_transformers import SentenceTransformer
 
 MODEL_NAME = "BAAI/bge-small-en-v1.5"   # 384 dimensions, ~33M parameters
 EMBEDDING_DIM = 384
@@ -13,17 +15,26 @@ EMBEDDING_DIM = 384
 QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
 
 
+def model_dir() -> str:
+    """Where ONNX model files are cached (baked into the Docker image at build time)."""
+    return os.environ.get("AEGIS_MODEL_DIR", os.path.expanduser("~/.cache/aegis-models"))
+
+
 @lru_cache(maxsize=1)
-def get_model() -> SentenceTransformer:
-    """Load once, reuse forever. Loading takes seconds; encoding takes milliseconds."""
-    return SentenceTransformer(MODEL_NAME)
+def get_model():
+    from fastembed import TextEmbedding
+    return TextEmbedding(MODEL_NAME, cache_dir=model_dir())
+
+
+def _unit(vectors: np.ndarray) -> np.ndarray:
+    norms = np.linalg.norm(vectors, axis=-1, keepdims=True)
+    return vectors / np.clip(norms, 1e-12, None)
 
 
 def embed_documents(texts: list[str], show_progress: bool = True) -> np.ndarray:
-    return get_model().encode(
-        texts, batch_size=32, normalize_embeddings=True, show_progress_bar=show_progress
-    )
+    vecs = np.array(list(get_model().embed(texts, batch_size=32)), dtype=np.float32)
+    return _unit(vecs)
 
 
 def embed_query(query: str) -> np.ndarray:
-    return get_model().encode(QUERY_PREFIX + query, normalize_embeddings=True)
+    return embed_documents([QUERY_PREFIX + query])[0]

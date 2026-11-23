@@ -1,10 +1,8 @@
-"""Pre-download the two model weights (used at Docker build time so the container starts offline)."""
-from sentence_transformers import CrossEncoder, SentenceTransformer
-
-from aegis.embed import MODEL_NAME
-from aegis.rerank import RERANK_MODEL
+"""Pre-download the two ONNX models (used at Docker build time so the container starts offline)."""
+from aegis.embed import get_model
+from aegis.rerank import get_reranker
 
 if __name__ == "__main__":
-    SentenceTransformer(MODEL_NAME)
-    CrossEncoder(RERANK_MODEL)
+    get_model()
+    get_reranker()
     print("models cached")

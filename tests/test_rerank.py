@@ -1,5 +1,3 @@
-import numpy as np
-
 import aegis.rerank as rr
 from aegis.retrieve import Hit
 
@@ -7,8 +5,8 @@ from aegis.retrieve import Hit
 class FakeCrossEncoder:
     """Pretends to be the model: scores a chunk by how many query words it contains."""
 
-    def predict(self, pairs, **kwargs):
-        return np.array([sum(w in doc.lower() for w in q.lower().split()) for q, doc in pairs], dtype=float)
+    def score(self, query, docs):
+        return [float(sum(w in d.lower() for w in query.lower().split())) for d in docs]
 
 
 def _hit(cid, text, bm=None):

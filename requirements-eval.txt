@@ -1,3 +1,5 @@
 # Optional: RAGAS faithfulness / answer-relevancy scoring (python -m eval.run_eval --ragas N)
 -r requirements.txt
+# torch reference models: scripts.build_embeddings, scripts.equivalence, scripts.load_chunks
+sentence-transformers
 ragas
