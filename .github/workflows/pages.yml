@@ -1,4 +1,5 @@
 name: pages
+# Deploys docs/ (the static Pipeline Explorer) to GitHub Pages.
 
 on:
   push:
