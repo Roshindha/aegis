@@ -51,3 +51,53 @@ def test_local_index_uses_precomputed_vectors_when_they_match(monkeypatch):
     monkeypatch.setattr(rv, "embed_query", lambda q: np.array([0.1, 0.9]))
     assert rv.semantic_search("x", k=1)[0].control_id == "AS-5"
     rv._local_index.cache_clear()
+
+
+def _db_env(monkeypatch):
+    monkeypatch.setenv("AEGIS_BACKEND", "db")
+    monkeypatch.setattr(rv, "_db_down_until", 0.0)
+    rv._local_index.cache_clear()
+    monkeypatch.setattr(rv, "load_chunks", lambda: CHUNKS)
+    monkeypatch.setattr(rv, "load_embeddings", lambda rows: np.array([[0.0, 1.0], [1.0, 0.0]], dtype="float32"))
+    monkeypatch.setattr(rv, "embed_query", lambda q: np.array([0.9, 0.1]))
+
+
+def test_db_failure_at_query_time_falls_back_to_snapshot(monkeypatch):
+    _db_env(monkeypatch)
+
+    def down():
+        raise ConnectionError("db unreachable")
+    monkeypatch.setattr(rv, "_connect", down)
+    assert rv.backend() == "db"
+    hits = rv.semantic_search("x", k=1)             # no exception: served from the snapshot
+    assert hits[0].control_id == "BR-2"
+    assert rv.backend() == "local"                  # marked down, so health reports the fallback
+    rv._local_index.cache_clear()
+
+
+def test_db_ping_reports_and_recovers(monkeypatch):
+    _db_env(monkeypatch)
+
+    class Conn:
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+        def execute(self, sql):
+            class R:
+                def fetchone(self): return (1,)
+            return R()
+    monkeypatch.setattr(rv, "_connect", lambda: Conn())
+    assert rv.db_ping() is True and rv.backend() == "db"
+
+    def down():
+        raise ConnectionError("x")
+    monkeypatch.setattr(rv, "_connect", down)
+    assert rv.db_ping() is False and rv.backend() == "local"
+    monkeypatch.setattr(rv, "_connect", lambda: Conn())
+    monkeypatch.setattr(rv, "_db_down_until", 0.0)  # retry window elapsed
+    assert rv.db_ping() is True and rv.backend() == "db"
+    rv._local_index.cache_clear()
+
+
+def test_local_backend_never_pings(monkeypatch):
+    monkeypatch.setenv("AEGIS_BACKEND", "local")
+    assert rv.db_ping() is False and rv.backend() == "local"

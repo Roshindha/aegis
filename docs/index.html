@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aegis Pipeline Explorer</title>
+<meta name="description" content="Benchmarked retrieval over Singapore IM8 Reform compliance controls: watch every pipeline stage.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="wrap">
+  <h1>Aegis <span class="muted">Pipeline Explorer</span></h1>
+  <p class="lede">Ask a question about the Singapore Government's IM8 Reform security controls and watch each retrieval stage run: pre-filter, semantic and BM25 search, fusion, cross-encoder rerank, guardrail, then a cited answer.</p>
+  <div id="status" class="status" role="status" aria-live="polite"></div>
+</header>
+
+<main class="wrap">
+  <section aria-labelledby="ask-h">
+    <h2 id="ask-h" class="sr">Ask a question</h2>
+    <form id="form" autocomplete="off">
+      <label for="q" class="sr">Question</label>
+      <input id="q" name="q" type="text" maxlength="500" placeholder="e.g. What does AS-5 require?" required minlength="3">
+      <button id="go" type="submit">Ask</button>
+    </form>
+    <div class="examples" id="examples" aria-label="Example questions"></div>
+  </section>
+
+  <section id="answer-card" class="card" hidden aria-live="polite"></section>
+  <section id="pipeline" hidden aria-label="Pipeline stages"><h2>Pipeline</h2><div id="stages"></div></section>
+
+  <section id="how" class="card">
+    <h2>How it works</h2>
+    <ol class="steps">
+      <li><b>Pre-filter</b>: regex rules refuse prompt injection, other frameworks or laws, and unknown control IDs. No model involved.</li>
+      <li><b>Semantic + BM25</b>: bge-small embeddings and keyword search each rank the 137 controls.</li>
+      <li><b>Fusion</b>: reciprocal rank fusion (k=60) merges the two lists.</li>
+      <li><b>Rerank</b>: a cross-encoder re-reads the top 20 (raw scores).</li>
+      <li><b>Guardrail</b>: a threshold calibrated by cross-validation decides to refuse <em>in code</em> before any LLM call.</li>
+      <li><b>Answer</b>: an LLM answers only from the retrieved controls and cites <code>[CONTROL-ID]</code>s.</li>
+    </ol>
+    <p class="muted">Crosswalk questions ("which controls reference NIST SP 800-53 IA-5?") use a structured reference index, because the control text does not contain its references.</p>
+  </section>
+
+  <section id="results" class="card">
+    <h2>Results</h2>
+    <p class="warn"><b>Read this first.</b> All 124 benchmark questions are <b>unverified</b>: 63 were generated from catalogue data, and 61 were drafted with LLM assistance; gold labels are pending manual verification. The crosswalk gold labels come from the same data as the crosswalk index, so those results measure routing, not independent truth. Source: committed run <code>eval/results/final.json</code>; 98 answerable questions.</p>
+    <div class="scroll"><table>
+      <caption>Retrieval (answerable questions)</caption>
+      <thead><tr><th>method</th><th>MRR</th><th>set-recall@5</th><th>hit@5</th></tr></thead>
+      <tbody>
+        <tr><td>semantic</td><td>0.577</td><td>0.638</td><td>0.704</td></tr>
+        <tr><td>BM25</td><td>0.761</td><td>0.784</td><td>0.847</td></tr>
+        <tr><td>hybrid (RRF)</td><td>0.735</td><td>0.768</td><td>0.827</td></tr>
+        <tr><td>hybrid + rerank</td><td>0.770</td><td>0.805</td><td>0.847</td></tr>
+        <tr><td>hybrid + rerank + crosswalk</td><td>0.937</td><td>0.951</td><td>0.990</td></tr>
+      </tbody>
+    </table></div>
+    <div class="scroll"><table>
+      <caption>End to end (Groq <code>openai/gpt-oss-20b</code>)</caption>
+      <thead><tr><th>measure</th><th>value</th></tr></thead>
+      <tbody>
+        <tr><td>Answer correct, baseline (hybrid + rerank)</td><td>67.3%</td></tr>
+        <tr><td>Answer correct, with crosswalk mode</td><td>87.8%</td></tr>
+        <tr><td>Guardrail held-out abstention F1 (pre-filter part is in-sample)</td><td>0.962</td></tr>
+        <tr><td>False refusals on answerable questions (guardrail on)</td><td>4.1%</td></tr>
+        <tr><td>Cited IDs that were in the retrieved set</td><td>100%</td></tr>
+        <tr><td>Answers that contain a citation at all</td><td>68.1%</td></tr>
+        <tr><td>RAGAS faithfulness / answer relevancy (6 of 15 sampled answers scored)</td><td>0.722 / 0.880</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted">Weak spots: group listings are correct only 30% of the time (the context holds 5 controls; groups have up to 11). Full tables, findings and limitations are in the <a href="https://github.com/Roshindha/aegis#results">README</a>. Not legal or compliance advice.</p>
+  </section>
+</main>
+
+<footer class="wrap muted">
+  Controls from the <a href="https://github.com/GovTechSG/tech-standards">GovTech Singapore IM8 Reform OSCAL catalogue</a> (MIT licence), snapshot 2025.05.13.
+  Aegis is independent and not affiliated with GovTech. · <a href="https://github.com/Roshindha/aegis">Source on GitHub</a>
+</footer>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

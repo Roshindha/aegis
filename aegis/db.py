@@ -12,7 +12,7 @@ def connect() -> psycopg.Connection:
     url = os.environ.get("DATABASE_URL")
     if not url:
         raise RuntimeError("DATABASE_URL is not set. Copy .env.example to .env and fill it in.")
-    conn = psycopg.connect(url)
+    conn = psycopg.connect(url, connect_timeout=5)
     # Supabase installs pgvector in the "extensions" schema. Put it on the search path,
     # otherwise Postgres can't find the vector type or the <=> operator.
     conn.execute("set search_path to public, extensions")

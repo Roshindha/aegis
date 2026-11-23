@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import re
+import time
 from dataclasses import dataclass, replace
 from functools import lru_cache
 
@@ -17,8 +18,40 @@ from aegis.embed import embed_documents, embed_query
 #   "local" (default): read corpus/chunks.jsonl, keep vectors in memory. No database needed,
 #                      so tests, CI, Docker and Hugging Face Spaces all work offline.
 #   "db":              Supabase Postgres + pgvector (set AEGIS_BACKEND=db and DATABASE_URL).
-def backend() -> str:
+def requested_backend() -> str:
     return os.environ.get("AEGIS_BACKEND", "local").lower()
+
+
+_DB_RETRY_SECONDS = 60
+_db_down_until = 0.0     # monotonic time before which a failed database is not retried
+
+
+def backend() -> str:
+    """The backend actually in use. "db" falls back to "local" (committed snapshot + precomputed
+    vectors) while the database is unreachable, and is retried every _DB_RETRY_SECONDS."""
+    if requested_backend() == "db" and time.monotonic() >= _db_down_until:
+        return "db"
+    return "local"
+
+
+def _mark_db_down() -> None:
+    global _db_down_until
+    _db_down_until = time.monotonic() + _DB_RETRY_SECONDS
+
+
+def db_ping() -> bool:
+    """One cheap query (also keeps a free-tier Supabase project awake). False = fell back to local."""
+    global _db_down_until
+    if requested_backend() != "db" or time.monotonic() < _db_down_until:
+        return False                                 # not using the DB, or still inside the retry window
+    try:
+        with _connect() as conn:
+            conn.execute("select 1").fetchone()
+        _db_down_until = 0.0
+        return True
+    except Exception:                                # noqa: BLE001 - any failure means "use the snapshot"
+        _mark_db_down()
+        return False
 
 
 def _connect():
@@ -70,9 +103,12 @@ def _local_index() -> tuple[list[tuple], np.ndarray]:
 def semantic_search(query: str, k: int = 5) -> list[Hit]:
     q = embed_query(query)
     if backend() == "db":
-        with _connect() as conn:
-            rows = conn.execute(SEMANTIC_SQL, {"q": q, "k": k}).fetchall()
-        return [Hit(*row, semantic_rank=i) for i, row in enumerate(rows, start=1)]
+        try:
+            with _connect() as conn:
+                rows = conn.execute(SEMANTIC_SQL, {"q": q, "k": k}).fetchall()
+            return [Hit(*row, semantic_rank=i) for i, row in enumerate(rows, start=1)]
+        except Exception:                            # noqa: BLE001 - database down: use the snapshot
+            _mark_db_down()
     rows, matrix = _local_index()
     sims = matrix @ q                       # cosine similarity: both sides are unit length
     top = np.argsort(-sims)[:k]
@@ -97,14 +133,9 @@ def tokenize(text: str) -> list[str]:
 
 @lru_cache(maxsize=1)
 def _load_corpus() -> tuple[list[tuple], BM25Okapi]:
-    """Read all chunks once and build the BM25 index in memory (137 rows: instant)."""
-    if backend() == "db":
-        with _connect() as conn:
-            rows = conn.execute(
-                "select chunk_id, control_id, title, group_title, content from chunks order by chunk_id"
-            ).fetchall()
-    else:
-        rows = _local_rows()
+    """BM25 always indexes the committed snapshot (identical rows to the database, 137 of them),
+    so keyword search never depends on the database being up."""
+    rows = _local_rows()
     return rows, BM25Okapi([tokenize(r[4]) for r in rows])
 
 

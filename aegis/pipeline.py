@@ -55,7 +55,7 @@ class Result:
 
     def to_dict(self) -> dict:
         d = asdict(self)
-        d["hits"] = [hit_dict(h) for h in self.hits]
+        d["hits"] = [hit_dict(h, with_content=True) for h in self.hits]   # content: citation chips expand to it
         return d
 
 
