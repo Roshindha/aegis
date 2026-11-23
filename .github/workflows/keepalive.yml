@@ -5,9 +5,9 @@ name: keepalive
 # NOTE: GitHub disables scheduled workflows after 60 days without repository activity;
 # push a commit (or re-enable the workflow in the Actions tab) to restart it.
 on:
+  workflow_dispatch:
   schedule:
     - cron: "*/14 * * * *"
-  workflow_dispatch:
 
 jobs:
   ping:
